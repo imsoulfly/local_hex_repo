@@ -10,7 +10,14 @@ defmodule LocalHex.MixProject do
       compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -52,6 +59,8 @@ defmodule LocalHex.MixProject do
       # dev libraries
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:excoveralls, "~> 0.10", only: :test},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:phoenix_live_reload, "~> 1.2", only: :dev}
     ]
   end

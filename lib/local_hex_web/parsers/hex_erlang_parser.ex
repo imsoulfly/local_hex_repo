@@ -2,6 +2,10 @@ defmodule LocalHexWeb.HexErlangParser do
   @moduledoc """
   Module implementing the Plug.Parser behaviour sepcification to identfiy
   and handle `vnd.hex+erlang` content type
+
+  Apache OS notice:
+  The source orginal was taken from here:
+  https://github.com/wojtekmach/mini_repo/blob/master/lib/mini_repo/hex_erlang_parser.ex
   """
 
   @behaviour Plug.Parsers
@@ -43,6 +47,6 @@ defmodule LocalHexWeb.HexErlangParser do
     {:ok, terms, conn}
   rescue
     ArgumentError ->
-      raise Plug.BadRequestError, message: "bad terms"
+      reraise Plug.BadRequestError, message: "bad terms"
   end
 end
