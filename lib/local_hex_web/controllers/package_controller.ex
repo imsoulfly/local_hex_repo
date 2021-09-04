@@ -1,4 +1,4 @@
-defmodule LocalHexWeb.PageController do
+defmodule LocalHexWeb.PackageController do
   use LocalHexWeb, :controller
 
   def index(conn, _params) do

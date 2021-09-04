@@ -1,4 +1,4 @@
-defmodule LocalHexWeb.PageControllerTest do
+defmodule LocalHexWeb.PackageControllerTest do
   use LocalHexWeb.ConnCase
 
   test "GET /", %{conn: conn} do

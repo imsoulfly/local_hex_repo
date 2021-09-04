@@ -17,7 +17,7 @@ defmodule LocalHexWeb.Router do
   scope "/", LocalHexWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", PackageController, :index
   end
 
   # Other scopes may use custom stacks.
