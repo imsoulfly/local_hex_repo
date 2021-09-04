@@ -11,27 +11,53 @@ defmodule LocalHexWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "hex"]
+
+    plug Plug.Parsers,
+      parsers: [LocalHex.HexErlangParser],
+      pass: ["*/*"]
   end
 
   scope "/", LocalHexWeb do
     pipe_through :browser
 
     get "/", PackageController, :index
+    # Endpoint for showing all version of a package
+    # get "/all_versions/:name", PackageController, :show
+
+    # Candidates for endpoints take from HEX API spec
+
+    # get "/names", HexController, :download_names
+    # get "/versions", HexController, :download_versions
+    # get "/docs/:tarball", HexController, :download_docs_tarball
+    # get "/packages/:name", HexController, :download_package
+    # get "/tarballs/:tarball", HexController, :download_tarball
+
+    # get "/packages/:name/:version/documentation",
+    #     DocumentationController,
+    #     :documentation
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", LocalHexWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", LocalHexWeb.API do
+    pipe_through :api
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
+    # Candidates for endpoints taken from HEX API specs
+
+    # post "/publish", PackageController, :create
+
+    # First necessary batch
+    # scope "/packages/:name/releases/:version" do
+    #   delete "/", PackageController, :delete
+    #   post "/retire", PackageController, :retire
+    #   delete "/retire", PackageController, :unretire
+
+    #   post "/docs", DocumentationController, :create_docs
+    # end
+
+    # Reminder to add account authentication as well
+    # get "/users/me", ErrorController, :not_found
+  end
+
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router
 
@@ -41,10 +67,6 @@ defmodule LocalHexWeb.Router do
     end
   end
 
-  # Enables the Swoosh mailbox preview in development.
-  #
-  # Note that preview only shows emails that were sent by the same
-  # node running the Phoenix server.
   if Mix.env() == :dev do
     scope "/dev" do
       pipe_through :browser
