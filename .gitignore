@@ -24,6 +24,8 @@ local_hex-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
+/priv/static/test_storage/
+/priv/static/storage/
 
 # In case you use Node.js/npm, you want to ignore these.
 npm-debug.log

@@ -3,7 +3,10 @@ import Config
 
 config :local_hex,
   ecto_repos: [LocalHex.Repo],
-  auth_token: "local_token"
+  auth_token: "local_token",
+  storage: [
+    root_path: "./priv/static/storage"
+  ]
 
 config :local_hex, LocalHexWeb.Endpoint,
   url: [host: "localhost"],
@@ -35,7 +38,7 @@ if Mix.env() == :dev do
     tasks: [
       "test --failed",
       "coveralls.html",
-      "credo --scrict"
+      "credo --strict"
     ]
 end
 

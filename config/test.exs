@@ -1,5 +1,11 @@
 import Config
 
+
+config :local_hex,
+  storage: [
+    root_path: "./priv/static/test_storage"
+  ]
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

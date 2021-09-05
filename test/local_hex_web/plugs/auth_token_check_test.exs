@@ -11,7 +11,6 @@ defmodule LocalHexWeb.Plugs.AuthTokenCheckTest do
   end
 
   test "call successful with not not matching endpoint" do
-    opts = [test: :foo]
     conn =
       build_conn(:get, "/another_endpoint")
       |> Plug.Conn.put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
