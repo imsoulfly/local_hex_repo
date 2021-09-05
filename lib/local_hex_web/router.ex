@@ -12,7 +12,7 @@ defmodule LocalHexWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json", "hex"]
-
+    plug LocalHexWeb.Plugs.AuthTokenCheck
     plug Plug.Parsers,
       parsers: [LocalHex.HexErlangParser],
       pass: ["*/*"]
