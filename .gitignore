@@ -9,6 +9,7 @@
 
 # Where 3rd-party dependencies like ExDoc output generated docs.
 /doc/
+/log/
 
 # Ignore .fetch files in case you like to edit your project deps locally.
 /.fetch
@@ -26,6 +27,8 @@ local_hex-*.tar
 /priv/static/assets/
 /priv/static/test_storage/
 /priv/static/storage/
+/priv/repos/
+/priv/test_repos/
 
 # In case you use Node.js/npm, you want to ignore these.
 npm-debug.log

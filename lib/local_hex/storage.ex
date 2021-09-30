@@ -9,15 +9,22 @@ defmodule LocalHex.Storage do
 
   require Logger
 
-  def write(path, value) do
-    path = path(path)
-    Logger.debug(inspect({__MODULE__, :put, path}))
+  alias LocalHex.Package
+
+  def write(repository, %Package{tarball: tarball} = package) when not is_nil(tarball) do
+    write(repository, tarball_path(package), tarball)
+  end
+
+  def write(repository, path, value) do
+    path = path(repository, path)
+    Logger.debug(inspect({__MODULE__, :write, path}))
+
     File.mkdir_p!(Path.dirname(path))
     File.write(path, value)
   end
 
-  def read(path) do
-    path = path(path)
+  def read(repository, path) do
+    path = path(repository, path)
     Logger.debug(inspect({__MODULE__, :get, path}))
 
     case File.read(path) do
@@ -32,8 +39,8 @@ defmodule LocalHex.Storage do
     end
   end
 
-  def delete(path) do
-    path = path(path)
+  def delete(repository, path) do
+    path = path(repository, path)
     Logger.debug(inspect({__MODULE__, :delete, path}))
 
     case File.rm(path) do
@@ -48,11 +55,16 @@ defmodule LocalHex.Storage do
     end
   end
 
-  defp path(path) do
-    Path.join([root_path() | List.wrap(path)])
+  defp tarball_path(package) do
+    ["tarballs", "#{package.name}-#{package.version}.tar"]
+  end
+
+  defp path(repository, path) do
+    Path.join([root_path(), repository.name | List.wrap(path)])
   end
 
   defp root_path do
-    Application.fetch_env!(:local_hex, :storage)[:root_path]
+    path = Application.fetch_env!(:local_hex, :repositories_path)
+    Path.join(Application.app_dir(:local_hex), path)
   end
 end

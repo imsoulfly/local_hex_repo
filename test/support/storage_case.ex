@@ -16,14 +16,22 @@ defmodule LocalHex.StorageCase do
       root_path()
       |> File.rm_rf()
     end)
+
     :ok
   end
 
-  def path(path) do
-    Path.join([root_path() | List.wrap(path)])
+  def repository_config do
+    Application.fetch_env!(:local_hex, :repositories)
+    |> Keyword.fetch!(:main)
+    |> LocalHex.Repository.init()
+  end
+
+  def path(repository, path) do
+    Path.join([root_path(), repository.name | List.wrap(path)])
   end
 
   def root_path do
-    Application.fetch_env!(:local_hex, :storage)[:root_path]
+    path = Application.fetch_env!(:local_hex, :repositories_path)
+    Path.join(Application.app_dir(:local_hex), path)
   end
 end

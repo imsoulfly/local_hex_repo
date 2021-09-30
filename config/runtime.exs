@@ -38,6 +38,11 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  # Additional mimetype to describe release packages
+  config :mime, :types, %{
+    "application/vnd.hex+erlang" => ["hex"]
+  }
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix

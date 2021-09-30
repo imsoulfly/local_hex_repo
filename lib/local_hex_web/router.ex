@@ -13,8 +13,9 @@ defmodule LocalHexWeb.Router do
   pipeline :api do
     plug :accepts, ["json", "hex"]
     plug LocalHexWeb.Plugs.AuthTokenCheck
+
     plug Plug.Parsers,
-      parsers: [LocalHex.HexErlangParser],
+      parsers: [LocalHexWeb.HexErlangParser],
       pass: ["*/*"]
   end
 
@@ -43,7 +44,7 @@ defmodule LocalHexWeb.Router do
 
     # Candidates for endpoints taken from HEX API specs
 
-    # post "/publish", PackageController, :create
+    post "/publish", PackageController, :publish
 
     # First necessary batch
     # scope "/packages/:name/releases/:version" do

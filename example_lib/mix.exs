@@ -28,7 +28,7 @@ defmodule ExampleLib.MixProject do
 
   defp package do
     [
-      licenses: ["XING-internal"],
+      licenses: ["Apache 2.0"],
       links: %{}
     ]
   end
@@ -36,7 +36,7 @@ defmodule ExampleLib.MixProject do
   defp hex do
     [
       api_url: "http://localhost:4000/api",
-      api_key: "api_key"
+      api_key: "local_token"
     ]
   end
 end

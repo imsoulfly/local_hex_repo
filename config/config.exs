@@ -3,9 +3,18 @@ import Config
 
 config :local_hex,
   ecto_repos: [LocalHex.Repo],
-  auth_token: "local_token",
   storage: [
     root_path: "./priv/static/storage"
+  ],
+  auth_token: "local_token",
+  repositories_path: "priv/repos/",
+  repositories: [
+    main: [
+      name: "main",
+      store: :local,
+      private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
+      public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
+    ]
   ]
 
 config :local_hex, LocalHexWeb.Endpoint,
@@ -32,6 +41,10 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :phoenix, :json_library, Jason
+
+config :mime, :types, %{
+    "application/vnd.hex+erlang" => ["hex"]
+  }
 
 if Mix.env() == :dev do
   config :mix_test_watch,

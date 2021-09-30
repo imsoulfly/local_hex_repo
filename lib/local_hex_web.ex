@@ -87,7 +87,6 @@ defmodule LocalHexWeb do
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 
-      import LocalHexWeb.ErrorHelpers
       import LocalHexWeb.Gettext
       alias LocalHexWeb.Router.Helpers, as: Routes
     end

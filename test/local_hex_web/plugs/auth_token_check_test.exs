@@ -13,7 +13,10 @@ defmodule LocalHexWeb.Plugs.AuthTokenCheckTest do
   test "call successful with not not matching endpoint" do
     conn =
       build_conn(:get, "/another_endpoint")
-      |> Plug.Conn.put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+      |> Plug.Conn.put_req_header(
+        "authorization",
+        Application.fetch_env!(:local_hex, :auth_token)
+      )
       |> AuthTokenCheck.call([])
 
     assert conn.halted == false
@@ -22,7 +25,10 @@ defmodule LocalHexWeb.Plugs.AuthTokenCheckTest do
   test "call successful with correct authorization header" do
     conn =
       build_conn(:get, "/api/endpoint")
-      |> Plug.Conn.put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+      |> Plug.Conn.put_req_header(
+        "authorization",
+        Application.fetch_env!(:local_hex, :auth_token)
+      )
       |> AuthTokenCheck.call([])
 
     assert conn.halted == false

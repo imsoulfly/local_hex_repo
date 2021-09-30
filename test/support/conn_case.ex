@@ -35,7 +35,27 @@ defmodule LocalHexWeb.ConnCase do
 
   setup tags do
     pid = Sandbox.start_owner!(LocalHex.Repo, shared: not tags[:async])
-    on_exit(fn -> Sandbox.stop_owner(pid) end)
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    on_exit(fn ->
+      root_path()
+      |> File.rm_rf()
+
+      Sandbox.stop_owner(pid)
+    end)
+    {:ok, conn: Phoenix.ConnTest.build_conn(), repository: repository_config()}
+  end
+
+  def repository_config do
+    Application.fetch_env!(:local_hex, :repositories)
+    |> Keyword.fetch!(:main)
+    |> LocalHex.Repository.init()
+  end
+
+  def path(repository, path) do
+    Path.join([root_path(), repository.name | List.wrap(path)])
+  end
+
+  def root_path do
+    path = Application.fetch_env!(:local_hex, :repositories_path)
+    Path.join(Application.app_dir(:local_hex), path)
   end
 end
