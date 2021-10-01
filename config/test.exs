@@ -35,9 +35,6 @@ config :local_hex, LocalHexWeb.Endpoint,
   url: [host: "localhost", scheme: "http", port: 4002],
   server: true
 
-# In test we don't send emails.
-config :local_hex, LocalHex.Mailer, adapter: Swoosh.Adapters.Test
-
 # tell logger to load a LoggerFileBackend processes
 config :logger,
   backends: [{LoggerFileBackend, :file_log}]

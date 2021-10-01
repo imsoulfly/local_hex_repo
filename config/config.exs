@@ -24,10 +24,6 @@ config :local_hex, LocalHexWeb.Endpoint,
   pubsub_server: LocalHex.PubSub,
   live_view: [signing_salt: "9DO+WBcQ"]
 
-config :local_hex, LocalHex.Mailer, adapter: Swoosh.Adapters.Local
-
-config :swoosh, :api_client, false
-
 config :esbuild,
   version: "0.12.18",
   default: [
