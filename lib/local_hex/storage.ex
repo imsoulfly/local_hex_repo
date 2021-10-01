@@ -9,10 +9,14 @@ defmodule LocalHex.Storage do
 
   require Logger
 
-  alias LocalHex.Package
+  alias LocalHex.{Documentation, Package}
 
   def write(repository, %Package{tarball: tarball} = package) when not is_nil(tarball) do
     write(repository, tarball_path(package), tarball)
+  end
+
+  def write(repository, %Documentation{tarball: tarball} = package) when not is_nil(tarball) do
+    write(repository, docs_path(package), tarball)
   end
 
   def write(repository, path, value) do
@@ -57,6 +61,10 @@ defmodule LocalHex.Storage do
 
   defp tarball_path(package) do
     ["tarballs", "#{package.name}-#{package.version}.tar"]
+  end
+
+  defp docs_path(documentation) do
+    ["docs", "#{documentation.name}-#{documentation.version}.tar"]
   end
 
   defp path(repository, path) do

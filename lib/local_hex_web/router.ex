@@ -47,13 +47,13 @@ defmodule LocalHexWeb.Router do
     post "/publish", PackageController, :publish
 
     # First necessary batch
-    # scope "/packages/:name/releases/:version" do
+    scope "/packages/:name/releases/:version" do
     #   delete "/", PackageController, :delete
     #   post "/retire", PackageController, :retire
     #   delete "/retire", PackageController, :unretire
 
-    #   post "/docs", DocumentationController, :create_docs
-    # end
+      post "/docs", PackageController, :publish_docs
+    end
 
     # Reminder to add account authentication as well
     # get "/users/me", ErrorController, :not_found

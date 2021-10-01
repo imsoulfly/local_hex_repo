@@ -22,6 +22,18 @@ defmodule LocalHexWeb.API.PackageController do
     end
   end
 
+  def publish_docs(conn, params) do
+    {:ok, tarball, conn} = read_tarball(conn)
+
+    case Repository.publish_docs(repository_config(), params["name"], params["version"], tarball) do
+      :ok ->
+        send_resp(conn, 201, "")
+
+      {:error, _} = error ->
+        send_resp(conn, 400, inspect(error))
+    end
+  end
+
   defp read_tarball(conn, tarball \\ <<>>) do
     case Plug.Conn.read_body(conn) do
       {:more, partial, conn} ->

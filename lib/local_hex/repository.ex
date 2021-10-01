@@ -12,7 +12,7 @@ defmodule LocalHex.Repository do
   * `private_key` - Private key to be kept in secret
   """
 
-  alias LocalHex.{Package, Storage}
+  alias LocalHex.{Documentation, Package, Storage}
   alias LocalHex.Registry
   alias LocalHex.Registry.Builder
 
@@ -45,6 +45,13 @@ defmodule LocalHex.Repository do
         |> save()
 
       {:ok, repository}
+    end
+  end
+
+  def publish_docs(repository, name, version, tarball) do
+    with {:ok, documentation} <- Documentation.load(name, version, tarball),
+         :ok <- Storage.write(repository, documentation) do
+      :ok
     end
   end
 
