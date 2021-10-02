@@ -4,7 +4,7 @@ defmodule LocalHex.Documentation do
   defstruct [:name, :version, :tarball]
 
   def load(name, version, tarball) do
-    with {:ok, _result} <- :hex_tarball.unpack_docs(tarball, :memory),
+    with {:ok, _result} <- :erl_tar.extract({:binary, tarball}, [:compressed, :memory]),
          :ok <- validate_name(name),
          :ok <- validate_version(version) do
 

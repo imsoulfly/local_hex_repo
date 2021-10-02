@@ -11,6 +11,7 @@ defmodule LocalHex.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      dialyzer: dialyzer(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -64,6 +65,14 @@ defmodule LocalHex.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:phoenix_live_reload, "~> 1.2", only: :dev}
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_deps: :app_tree,
+      plt_add_apps: [],
+      plt_ignore_apps: []
     ]
   end
 
