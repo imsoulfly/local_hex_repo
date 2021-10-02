@@ -17,7 +17,7 @@ defmodule LocalHexWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
-  alias Ecto.Adapters.SQL.Sandbox
+  # alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
@@ -34,12 +34,12 @@ defmodule LocalHexWeb.ConnCase do
   end
 
   setup tags do
-    pid = Sandbox.start_owner!(LocalHex.Repo, shared: not tags[:async])
+    # pid = Sandbox.start_owner!(LocalHex.Repo, shared: not tags[:async])
     on_exit(fn ->
       root_path()
       |> File.rm_rf()
 
-      Sandbox.stop_owner(pid)
+      # Sandbox.stop_owner(pid)
     end)
     {:ok, conn: Phoenix.ConnTest.build_conn(), repository: repository_config()}
   end

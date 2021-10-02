@@ -9,7 +9,7 @@ defmodule LocalHex.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      LocalHex.Repo,
+      # LocalHex.Repo,
       # Start the Telemetry supervisor
       LocalHexWeb.Telemetry,
       # Start the PubSub system
