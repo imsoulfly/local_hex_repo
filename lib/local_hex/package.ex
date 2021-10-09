@@ -7,7 +7,6 @@ defmodule LocalHex.Package do
     with {:ok, result} <- :hex_tarball.unpack(tarball, :memory),
          :ok <- validate_name(result.metadata),
          :ok <- validate_version(result.metadata) do
-
       package = %__MODULE__{
         name: result.metadata["name"],
         version: result.metadata["version"],

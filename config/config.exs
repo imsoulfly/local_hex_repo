@@ -39,8 +39,8 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :mime, :types, %{
-    "application/vnd.hex+erlang" => ["hex"]
-  }
+  "application/vnd.hex+erlang" => ["hex"]
+}
 
 if Mix.env() == :dev do
   config :mix_test_watch,

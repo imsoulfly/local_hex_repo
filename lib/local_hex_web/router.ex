@@ -48,9 +48,9 @@ defmodule LocalHexWeb.Router do
 
     # First necessary batch
     scope "/packages/:name/releases/:version" do
-    #   delete "/", PackageController, :delete
-    #   post "/retire", PackageController, :retire
-    #   delete "/retire", PackageController, :unretire
+      #   delete "/", PackageController, :delete
+      #   post "/retire", PackageController, :retire
+      #   delete "/retire", PackageController, :unretire
 
       post "/docs", PackageController, :publish_docs
     end

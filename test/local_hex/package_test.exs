@@ -10,14 +10,15 @@ defmodule LocalHex.PackageTest do
     assert package.tarball == tarball
 
     assert package.release.version == "0.1.0"
+
     assert package.release.dependencies == [
-      %{
-        app: "ex_doc",
-        optional: false,
-        package: "ex_doc",
-        repository: "hexpm",
-        requirement: ">= 0.0.0"
-      }
-    ]
+             %{
+               app: "ex_doc",
+               optional: false,
+               package: "ex_doc",
+               repository: "hexpm",
+               requirement: ">= 0.0.0"
+             }
+           ]
   end
 end

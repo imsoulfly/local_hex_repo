@@ -7,13 +7,11 @@ defmodule LocalHex.Documentation do
     with {:ok, _result} <- :erl_tar.extract({:binary, tarball}, [:compressed, :memory]),
          :ok <- validate_name(name),
          :ok <- validate_version(version) do
-
-      documentation =
-        %__MODULE__{
-          name: name,
-          version: version,
-          tarball: tarball
-        }
+      documentation = %__MODULE__{
+        name: name,
+        version: version,
+        tarball: tarball
+      }
 
       {:ok, documentation}
     else

@@ -41,6 +41,7 @@ defmodule LocalHexWeb.ConnCase do
 
       # Sandbox.stop_owner(pid)
     end)
+
     {:ok, conn: Phoenix.ConnTest.build_conn(), repository: repository_config()}
   end
 

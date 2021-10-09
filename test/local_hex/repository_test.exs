@@ -11,12 +11,12 @@ defmodule LocalHex.RepositoryTest do
         |> Repository.init()
 
       assert repository == %Repository{
-          name: "test",
-          store: :local,
-          registry: %{},
-          private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
-          public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
-        }
+               name: "test",
+               store: :local,
+               registry: %{},
+               private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
+               public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
+             }
     end
   end
 
@@ -29,12 +29,12 @@ defmodule LocalHex.RepositoryTest do
         |> Repository.load()
 
       assert repository == %Repository{
-          name: "test",
-          store: :local,
-          registry: %{},
-          private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
-          public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
-        }
+               name: "test",
+               store: :local,
+               registry: %{},
+               private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
+               public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
+             }
     end
 
     test "a repository again after storing" do
@@ -49,12 +49,12 @@ defmodule LocalHex.RepositoryTest do
       assert File.exists?(path(repository, ["test.bin"]))
 
       assert repository == %Repository{
-          name: "test",
-          store: :local,
-          registry: %{},
-          private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
-          public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
-        }
+               name: "test",
+               store: :local,
+               registry: %{},
+               private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
+               public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
+             }
     end
   end
 

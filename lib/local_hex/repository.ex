@@ -20,13 +20,11 @@ defmodule LocalHex.Repository do
 
   @derive {Inspect, only: [:name, :public_key, :store, :registry]}
   @enforce_keys [:name, :public_key, :private_key, :store]
-  defstruct [
-    name: "localhex",
-    store: :local,
-    registry: %{},
-    public_key: nil,
-    private_key: nil
-  ]
+  defstruct name: "localhex",
+            store: :local,
+            registry: %{},
+            public_key: nil,
+            private_key: nil
 
   def init(repository_config) do
     struct!(__MODULE__, repository_config)
@@ -35,7 +33,6 @@ defmodule LocalHex.Repository do
   def publish(repository, tarball) do
     with {:ok, package} <- Package.load_from_tarball(tarball),
          :ok <- Storage.write(repository, package) do
-
       repository =
         load(repository)
         |> Map.update!(:registry, fn registry ->

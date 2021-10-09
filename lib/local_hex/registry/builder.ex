@@ -104,7 +104,11 @@ defmodule LocalHex.Registry.Builder do
 
     case Map.fetch(repository.registry, package_name) do
       {:ok, releases} ->
-        Map.put(resources, Path.join(["packages", package_name]), build_package(repository, package_name, releases))
+        Map.put(
+          resources,
+          Path.join(["packages", package_name]),
+          build_package(repository, package_name, releases)
+        )
 
       # release is being reverted
       :error ->
