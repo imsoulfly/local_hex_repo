@@ -1,7 +1,7 @@
 defmodule LocalHex.RegistryTest do
   use ExUnit.Case, async: true
 
-  test "#add_packge to empty registry" do
+  test "#add_package to empty registry" do
     {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
     {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
 

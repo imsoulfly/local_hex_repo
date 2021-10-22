@@ -33,7 +33,7 @@ defmodule LocalHexWeb.ConnCase do
     end
   end
 
-  setup tags do
+  setup _tags do
     # pid = Sandbox.start_owner!(LocalHex.Repo, shared: not tags[:async])
     on_exit(fn ->
       root_path()

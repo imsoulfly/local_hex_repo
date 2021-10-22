@@ -90,7 +90,16 @@ defmodule LocalHex.Registry.Builder do
     resources = build_partial(repository, package.name)
 
     for {name, content} <- resources do
-      Storage.write(repository, [name], content)
+      case name do
+        "names" ->
+          Storage.write_names(repository, content)
+
+        "versions" ->
+          Storage.write_versions(repository, content)
+
+        "package/" <> name ->
+          Storage.write_package(repository, name, content)
+      end
     end
 
     repository
@@ -106,7 +115,7 @@ defmodule LocalHex.Registry.Builder do
       {:ok, releases} ->
         Map.put(
           resources,
-          Path.join(["packages", package_name]),
+          Path.join(["package", package_name]),
           build_package(repository, package_name, releases)
         )
 

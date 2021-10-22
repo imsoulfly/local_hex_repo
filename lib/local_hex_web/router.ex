@@ -28,11 +28,11 @@ defmodule LocalHexWeb.Router do
 
     # Candidates for endpoints take from HEX API spec
 
-    # get "/names", HexController, :download_names
-    # get "/versions", HexController, :download_versions
-    # get "/docs/:tarball", HexController, :download_docs_tarball
-    # get "/packages/:name", HexController, :download_package
-    # get "/tarballs/:tarball", HexController, :download_tarball
+    get "/names", StorageController, :names
+    get "/versions", StorageController, :versions
+    get "/docs/:tarball", StorageController, :docs_tarball
+    get "/packages/:name", StorageController, :package
+    get "/tarballs/:tarball", StorageController, :tarball
 
     # get "/packages/:name/:version/documentation",
     #     DocumentationController,
@@ -64,7 +64,7 @@ defmodule LocalHexWeb.Router do
 
     scope "/" do
       pipe_through :browser
-      live_dashboard "/dashboard", metrics: LocalHexWeb.Telemetry
+      # live_dashboard "/dashboard", metrics: LocalHexWeb.Telemetry
     end
   end
 end

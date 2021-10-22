@@ -32,7 +32,7 @@ defmodule LocalHex.Repository do
 
   def publish(repository, tarball) do
     with {:ok, package} <- Package.load_from_tarball(tarball),
-         :ok <- Storage.write(repository, package) do
+         :ok <- Storage.write_package_tarball(repository, package) do
       repository =
         load(repository)
         |> Map.update!(:registry, fn registry ->
@@ -47,7 +47,7 @@ defmodule LocalHex.Repository do
 
   def publish_docs(repository, name, version, tarball) do
     with {:ok, documentation} <- Documentation.load(name, version, tarball),
-         :ok <- Storage.write(repository, documentation) do
+         :ok <- Storage.write_docs_tarball(repository, documentation) do
       :ok
     end
   end
@@ -58,14 +58,14 @@ defmodule LocalHex.Repository do
       registry: repository.registry
     }
 
-    Storage.write(repository, repository_path(repository), :erlang.term_to_binary(contents))
+    Storage.write_repository(repository, :erlang.term_to_binary(contents))
 
     repository
   end
 
   def load(repository) do
     registry =
-      case Storage.read(repository, repository_path(repository)) do
+      case Storage.read_repository(repository) do
         {:ok, contents} ->
           manifest_vsn = @manifest_vsn
 
@@ -78,9 +78,5 @@ defmodule LocalHex.Repository do
       end
 
     %{repository | registry: registry}
-  end
-
-  defp repository_path(repository) do
-    repository.name <> ".bin"
   end
 end

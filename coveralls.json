@@ -1,6 +1,7 @@
 {
   "skip_files": [
     "application.ex",
+    "telemetry.ex",
     "test"
   ]
 }
