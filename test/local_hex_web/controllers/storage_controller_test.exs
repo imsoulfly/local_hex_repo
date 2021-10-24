@@ -89,4 +89,13 @@ defmodule LocalHexWeb.StorageControllerTest do
       assert conn.status == 404
     end
   end
+
+  describe "#public_key" do
+    test "loads public_key to be used for hex config ", %{conn: conn, repository: repository} do
+      conn = get(conn, "/public_key")
+
+      assert conn.status == 200
+      assert conn.resp_body == repository.public_key
+    end
+  end
 end

@@ -2,20 +2,20 @@
 
 Make hosting Erlang and Elixir libraries in your local environment easy
 
-To start your Phoenix server:
+## Local setup
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+To start the local runtime:
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+```
+mix deps.get
+mix phx.server
+```
 
-## Learn more
+To add the local_hex repo to your local `hex` configuration:
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+```
+wget -q http://localhost:4000/public_key
+mix hex.repo add local_hex http://localhost:4000 --public-key public_key
+rm -f public_key
+```

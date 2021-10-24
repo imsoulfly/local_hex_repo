@@ -33,6 +33,7 @@ defmodule LocalHexWeb.Router do
     get "/docs/:tarball", StorageController, :docs_tarball
     get "/packages/:name", StorageController, :package
     get "/tarballs/:tarball", StorageController, :tarball
+    get "/public_key", StorageController, :public_key
 
     # get "/packages/:name/:version/documentation",
     #     DocumentationController,
