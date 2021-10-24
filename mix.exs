@@ -28,7 +28,7 @@ defmodule LocalHex.MixProject do
   def application do
     [
       mod: {LocalHex.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :crypto, :inets, :ssl]
     ]
   end
 

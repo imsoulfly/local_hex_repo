@@ -41,8 +41,8 @@ defmodule LocalHexWeb.Plugs.AuthTokenCheckTest do
       |> AuthTokenCheck.call([])
 
     assert conn.status == 401
-    assert conn.resp_body == "unauthorized"
     assert conn.halted == true
+    assert :erlang.binary_to_term(conn.resp_body) == "unauthorized"
   end
 
   test "call unauthorized with missing authorization header" do
@@ -51,7 +51,7 @@ defmodule LocalHexWeb.Plugs.AuthTokenCheckTest do
       |> AuthTokenCheck.call([])
 
     assert conn.status == 401
-    assert conn.resp_body == "unauthorized"
     assert conn.halted == true
+    assert :erlang.binary_to_term(conn.resp_body) == "unauthorized"
   end
 end
