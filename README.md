@@ -16,6 +16,6 @@ To add the local_hex repo to your local `hex` configuration:
 
 ```
 wget -q http://localhost:4000/public_key
-mix hex.repo add local_hex http://localhost:4000 --public-key public_key
+mix hex.repo add local_hex_dev http://localhost:4000 --public-key public_key
 rm -f public_key
 ```

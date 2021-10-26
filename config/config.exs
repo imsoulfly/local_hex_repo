@@ -10,7 +10,7 @@ config :local_hex,
   repositories_path: "priv/repos/",
   repositories: [
     main: [
-      name: "main",
+      name: "local_hex_dev",
       store: :local,
       private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
       public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
