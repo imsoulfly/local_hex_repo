@@ -39,4 +39,46 @@ defmodule LocalHex.Registry do
       |> Enum.sort(&(Version.compare(&1.version, &2.version) == :lt))
     end)
   end
+
+  def has_version?(registry, package_name, version) do
+    registry[package_name]
+    |> Enum.any?(fn release ->
+      release.version == version
+    end)
+  end
+
+  def retire_package_release(registry, package_name, version, reason, message) do
+    Map.update!(registry, package_name, fn releases ->
+      for release <- releases do
+        if release.version == version do
+          retired = %{
+            reason: retirement_reason(reason),
+            message: message
+          }
+
+          Map.put(release, :retired, retired)
+        else
+          release
+        end
+      end
+    end)
+  end
+
+  def unretire_package_release(registry, package_name, version) do
+    Map.update!(registry, package_name, fn releases ->
+      for release <- releases do
+        if release.version == version do
+          Map.delete(release, :retired)
+        else
+          release
+        end
+      end
+    end)
+  end
+
+  defp retirement_reason("invalid"), do: :RETIRED_INVALID
+  defp retirement_reason("security"), do: :RETIRED_SECURITY
+  defp retirement_reason("deprecated"), do: :RETIRED_DEPRECATED
+  defp retirement_reason("renamed"), do: :RETIRED_RENAMED
+  defp retirement_reason(_), do: :RETIRED_OTHER
 end

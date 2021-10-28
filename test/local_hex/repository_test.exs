@@ -50,8 +50,12 @@ defmodule LocalHex.RepositoryTest do
 
       assert repository.name == "test"
       assert repository.store == :local
-      assert repository.private_key == File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__))
-      assert repository.public_key == File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
+
+      assert repository.private_key ==
+               File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__))
+
+      assert repository.public_key ==
+               File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
     end
   end
 
@@ -109,6 +113,67 @@ defmodule LocalHex.RepositoryTest do
 
       {:ok, tarball} = File.read("./test/fixtures/docs/example_lib-0.1.0.tar")
       {:error, :invalid} = Repository.publish_docs(repository, "example_lib", "0.1a.0", tarball)
+    end
+  end
+
+  describe "#retire_package_release" do
+    test "marks a release as retired" do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      {:ok, repository} =
+        LocalHex.Repository.retire(repository, "example_lib", "0.1.0", "invalid", "some_message")
+
+      result = repository.registry["example_lib"] |> List.first()
+
+      expected_retired = %{
+        reason: :RETIRED_INVALID,
+        message: "some_message"
+      }
+
+      assert Map.has_key?(result, :retired)
+      assert ^expected_retired = result.retired
+    end
+
+    test "error on missing version" do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      {:error, :not_found} =
+        LocalHex.Repository.retire(repository, "example_lib", "0.2.0", "invalid", "some_message")
+    end
+  end
+
+  describe "#unretire_package_release" do
+    test "removes a :retired entry from a release" do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      {:ok, repository} =
+        LocalHex.Repository.retire(repository, "example_lib", "0.1.0", "invalid", "some_message")
+
+      result = repository.registry["example_lib"] |> List.first()
+
+      assert Map.has_key?(result, :retired)
+
+      {:ok, repository} = LocalHex.Repository.unretire(repository, "example_lib", "0.1.0")
+      result = repository.registry["example_lib"] |> List.first()
+
+      refute Map.has_key?(result, :retired)
+    end
+
+    test "error on missing version" do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+      {:error, :not_found} = LocalHex.Repository.unretire(repository, "example_lib", "0.2.0")
     end
   end
 end

@@ -55,23 +55,23 @@ defmodule LocalHex.RegressionTest do
 
     assert {:ok, {200, _, ^tarball}} = :hex_repo.get_tarball(config, "foo", "1.0.0")
 
-    # TODO: for later waiting for retire, unretire, delete
-    # {:ok, {201, _, _}} =
-    #   :hex_api_release.retire(config, "foo", "1.0.0", %{
-    #     "reason" => "security",
-    #     "message" => "CVE-2019-0000"
-    #   })
+    {:ok, {201, _, _}} =
+      :hex_api_release.retire(config, "foo", "1.0.0", %{
+        "reason" => "security",
+        "message" => "CVE-2019-0000"
+      })
 
-    # {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
-    # assert packages == [%{name: "foo", retired: [0], versions: ["1.0.0"]}]
+    {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
+    assert packages == [%{name: "foo", retired: [0], versions: ["1.0.0"]}]
 
-    # {:ok, {200, _, [release]}} = :hex_repo.get_package(config, "foo")
-    # assert release.retired == %{message: "CVE-2019-0000", reason: :RETIRED_SECURITY}
+    {:ok, {200, _, [release]}} = :hex_repo.get_package(config, "foo")
+    assert release.retired == %{message: "CVE-2019-0000", reason: :RETIRED_SECURITY}
 
-    # {:ok, {201, _, _}} = :hex_api_release.unretire(config, "foo", "1.0.0")
-    # {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
-    # assert packages == [%{name: "foo", retired: [], versions: ["1.0.0"]}]
+    {:ok, {201, _, _}} = :hex_api_release.unretire(config, "foo", "1.0.0")
+    {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
+    assert packages == [%{name: "foo", retired: [], versions: ["1.0.0"]}]
 
+    # TODO: for later waiting for  delete
     # # restart application, load registry from backup
     # Application.stop(:local_hex)
     # Application.start(:local_hex)

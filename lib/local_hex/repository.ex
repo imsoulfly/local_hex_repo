@@ -38,7 +38,7 @@ defmodule LocalHex.Repository do
         |> Map.update!(:registry, fn registry ->
           Registry.add_package(registry, package)
         end)
-        |> Builder.build_and_save(package)
+        |> Builder.build_and_save(package.name)
         |> save()
 
       {:ok, repository}
@@ -49,6 +49,40 @@ defmodule LocalHex.Repository do
     with {:ok, documentation} <- Documentation.load(name, version, tarball),
          :ok <- Storage.write_docs_tarball(repository, documentation) do
       :ok
+    end
+  end
+
+  def retire(repository, package_name, version, reason, message) do
+    repository = load(repository)
+
+    if Registry.has_version?(repository.registry, package_name, version) do
+      repository =
+        Map.update!(repository, :registry, fn registry ->
+          Registry.retire_package_release(registry, package_name, version, reason, message)
+        end)
+        |> Builder.build_and_save(package_name)
+        |> save()
+
+      {:ok, repository}
+    else
+      {:error, :not_found}
+    end
+  end
+
+  def unretire(repository, package_name, version) do
+    repository = load(repository)
+
+    if Registry.has_version?(repository.registry, package_name, version) do
+      repository =
+        Map.update!(repository, :registry, fn registry ->
+          Registry.unretire_package_release(registry, package_name, version)
+        end)
+        |> Builder.build_and_save(package_name)
+        |> save()
+
+      {:ok, repository}
+    else
+      {:error, :not_found}
     end
   end
 

@@ -79,4 +79,96 @@ defmodule LocalHexWeb.API.PackageControllerTest do
       assert conn.status == 400
     end
   end
+
+  describe "#retire" do
+    test "marks a release as retired", %{conn: conn} do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/octet-stream")
+        |> put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+        |> post("/api/packages/example_lib/releases/0.1.0/retire", %{
+          reason: "invalid",
+          message: "some_message"
+        })
+
+      assert conn.status == 201
+
+      repository = LocalHex.Repository.load(repository)
+      result = repository.registry["example_lib"] |> List.first()
+
+      expected_retired = %{
+        reason: :RETIRED_INVALID,
+        message: "some_message"
+      }
+
+      assert Map.has_key?(result, :retired)
+      assert ^expected_retired = result.retired
+    end
+
+    test "error on missing version", %{conn: conn} do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, _} = LocalHex.Repository.publish(repository, tarball)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/octet-stream")
+        |> put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+        |> post("/api/packages/example_lib/releases/0.2.0/retire", %{
+          reason: "invalid",
+          message: "some_message"
+        })
+
+      assert conn.status == 400
+    end
+  end
+
+  describe "#unretire" do
+    test "removes a :retired entry from a release", %{conn: conn} do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      {:ok, repository} =
+        LocalHex.Repository.retire(repository, "example_lib", "0.1.0", "invalid", "some_message")
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/octet-stream")
+        |> put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+        |> delete("/api/packages/example_lib/releases/0.1.0/retire")
+
+      assert conn.status == 201
+
+      repository = LocalHex.Repository.load(repository)
+      result = repository.registry["example_lib"] |> List.first()
+
+      refute Map.has_key?(result, :retired)
+    end
+
+    test "error on missing version", %{conn: conn} do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      {:ok, _} =
+        LocalHex.Repository.retire(repository, "example_lib", "0.1.0", "invalid", "some_message")
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/octet-stream")
+        |> put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+        |> delete("/api/packages/example_lib/releases/0.2.0/retire")
+
+      assert conn.status == 400
+    end
+  end
 end

@@ -34,6 +34,32 @@ defmodule LocalHexWeb.API.PackageController do
     end
   end
 
+  def retire(conn, params) do
+    case Repository.retire(
+           repository_config(),
+           params["name"],
+           params["version"],
+           params["reason"],
+           params["message"]
+         ) do
+      {:ok, _} ->
+        send_resp(conn, 201, "")
+
+      {:error, _} = error ->
+        send_resp(conn, 400, inspect(error))
+    end
+  end
+
+  def unretire(conn, params) do
+    case Repository.unretire(repository_config(), params["name"], params["version"]) do
+      {:ok, _} ->
+        send_resp(conn, 201, "")
+
+      {:error, _} = error ->
+        send_resp(conn, 400, inspect(error))
+    end
+  end
+
   defp read_tarball(conn, tarball \\ <<>>) do
     case Plug.Conn.read_body(conn) do
       {:more, partial, conn} ->

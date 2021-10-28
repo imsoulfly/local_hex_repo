@@ -86,8 +86,8 @@ defmodule LocalHex.Registry.Builder do
 
   alias LocalHex.Storage
 
-  def build_and_save(repository, package) do
-    resources = build_partial(repository, package.name)
+  def build_and_save(repository, package_name) do
+    resources = build_partial(repository, package_name)
 
     for {name, content} <- resources do
       case name do
