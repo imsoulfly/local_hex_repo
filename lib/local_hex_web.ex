@@ -22,7 +22,6 @@ defmodule LocalHexWeb do
       use Phoenix.Controller, namespace: LocalHexWeb
 
       import Plug.Conn
-      import LocalHexWeb.Gettext
       alias LocalHexWeb.Router.Helpers, as: Routes
     end
   end
@@ -72,7 +71,6 @@ defmodule LocalHexWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import LocalHexWeb.Gettext
     end
   end
 
@@ -87,7 +85,6 @@ defmodule LocalHexWeb do
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 
-      import LocalHexWeb.Gettext
       alias LocalHexWeb.Router.Helpers, as: Routes
     end
   end

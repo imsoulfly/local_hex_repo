@@ -25,7 +25,6 @@ config :local_hex, LocalHexWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"priv/gettext/.*(po)$",
       ~r"lib/local_hex_web/(live|views)/.*(ex)$",
       ~r"lib/local_hex_web/templates/.*(eex)$"
     ]
