@@ -21,12 +21,18 @@ defmodule LocalHex.RegressionTest do
         repo_public_key: test_repo[:public_key],
         # for publishing
         api_key: "test_token",
-        api_url: "http://localhost:4002/api"
+        api_url: "http://localhost:4002/api",
+        http_adapter: {:hex_http_httpc, %{
+          profile: :default,
+          http_options: [
+            ssl: [verify: :verify_none, reuse_sessions: false]
+          ]
+        }
+      }
     }
 
     {:ok, {404, _, _}} = :hex_repo.get_names(config)
 
-    # TODO:
     # {:ok, {400, _, "{:error, {:tarball, :eof}}"}} = :hex_api_release.publish(config, "bad")
     {:ok, {400, _, _}} = :hex_api_release.publish(config, "bad")
 
@@ -70,14 +76,6 @@ defmodule LocalHex.RegressionTest do
     {:ok, {201, _, _}} = :hex_api_release.unretire(config, "foo", "1.0.0")
     {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
     assert packages == [%{name: "foo", retired: [], versions: ["1.0.0"]}]
-
-    # TODO: for later waiting for  delete
-    # # restart application, load registry from backup
-    # Application.stop(:local_hex)
-    # Application.start(:local_hex)
-
-    # {:ok, {200, _, packages}} = :hex_repo.get_names(config)
-    # assert packages == [%{name: "foo"}]
 
     # assert {:ok, {201, _, _}} = publish_docs(config, "foo", "1.0.0", {'text/plain', "foo"})
     # assert {:ok, {200, _, "foo"}} = get_docs(config, "foo", "1.0.0")

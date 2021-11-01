@@ -171,4 +171,40 @@ defmodule LocalHexWeb.API.PackageControllerTest do
       assert conn.status == 400
     end
   end
+
+  describe "#revert" do
+    test "removes a release from repository", %{conn: conn} do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/octet-stream")
+        |> put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+        |> delete("/api/packages/example_lib/releases/0.1.0")
+
+      assert conn.status == 204
+
+      repository = LocalHex.Repository.load(repository)
+
+      assert Enum.empty?(repository.registry["example_lib"])
+    end
+
+    test "error on missing version", %{conn: conn} do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, _repository} = LocalHex.Repository.publish(repository, tarball)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/octet-stream")
+        |> put_req_header("authorization", Application.fetch_env!(:local_hex, :auth_token))
+        |> delete("/api/packages/example_lib/releases/0.2.0")
+
+      assert conn.status == 400
+    end
+  end
 end

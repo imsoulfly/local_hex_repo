@@ -47,6 +47,12 @@ defmodule LocalHex.Registry do
     end)
   end
 
+  def revert_release(registry, package_name, version) do
+    Map.update!(registry, package_name, fn releases ->
+      Enum.reject(releases, &(&1.version == version))
+    end)
+  end
+
   def retire_package_release(registry, package_name, version, reason, message) do
     Map.update!(registry, package_name, fn releases ->
       for release <- releases do

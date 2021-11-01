@@ -52,6 +52,23 @@ defmodule LocalHex.Repository do
     end
   end
 
+  def revert(repository, package_name, version) do
+    repository = load(repository)
+
+    if Registry.has_version?(repository.registry, package_name, version) do
+      repository =
+        Map.update!(repository, :registry, fn registry ->
+          Registry.revert_release(registry, package_name, version)
+        end)
+        |> Builder.build_and_save(package_name)
+        |> save()
+
+      {:ok, repository}
+    else
+      {:error, :not_found}
+    end
+  end
+
   def retire(repository, package_name, version, reason, message) do
     repository = load(repository)
 

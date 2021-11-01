@@ -34,6 +34,16 @@ defmodule LocalHexWeb.API.PackageController do
     end
   end
 
+  def revert(conn, params) do
+    case LocalHex.Repository.revert(repository_config(), params["name"], params["version"]) do
+      {:ok, _repository} ->
+        send_resp(conn, 204, "")
+
+      {:error, _} = error ->
+        send_resp(conn, 400, inspect(error))
+    end
+  end
+
   def retire(conn, params) do
     case Repository.retire(
            repository_config(),

@@ -294,4 +294,40 @@ defmodule LocalHex.RegistryTest do
       assert Map.has_key?(result, :retired)
     end
   end
+
+  describe "#revert_release" do
+    test "removes a release from a package" do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+
+      registry =
+        LocalHex.Registry.add_package(%{}, package)
+        |> LocalHex.Registry.revert_release(package.name, "0.1.0")
+
+      assert Enum.empty?(registry["example_lib"])
+    end
+
+    test "is idempotent" do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+
+      registry =
+        LocalHex.Registry.add_package(%{}, package)
+        |> LocalHex.Registry.revert_release(package.name, "0.1.0")
+        |> LocalHex.Registry.revert_release(package.name, "0.1.0")
+
+      assert Enum.empty?(registry["example_lib"])
+    end
+
+    test "does nothing on missing version" do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+
+      registry =
+        LocalHex.Registry.add_package(%{}, package)
+        |> LocalHex.Registry.revert_release(package.name, "0.2.0")
+
+      refute Enum.empty?(registry["example_lib"])
+    end
+  end
 end

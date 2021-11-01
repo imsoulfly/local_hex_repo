@@ -176,4 +176,24 @@ defmodule LocalHex.RepositoryTest do
       {:error, :not_found} = LocalHex.Repository.unretire(repository, "example_lib", "0.2.0")
     end
   end
+
+  describe "#revert" do
+    test "removes a release from repository" do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+      {:ok, repository} = LocalHex.Repository.revert(repository, "example_lib", "0.1.0")
+
+      assert Enum.empty?(repository.registry["example_lib"])
+    end
+
+    test "error on missing version" do
+      repository = repository_config()
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, repository} = LocalHex.Repository.publish(repository, tarball)
+      {:error, :not_found} = LocalHex.Repository.revert(repository, "example_lib", "0.2.0")
+    end
+  end
 end
