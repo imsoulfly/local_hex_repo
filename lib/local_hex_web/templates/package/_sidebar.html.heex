@@ -1,0 +1,24 @@
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar__toggle" id="sidebar-toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="sidebar__inner">
+    <div class="menu">
+      <p class="menu-label">
+        Internal Libraries
+      </p>
+
+      <ul class="menu-list">
+        <%= for package <- LocalHex.Registry.all_versions_of_packages(@repo.registry) do %>
+          <li>
+            <% package_path = Routes.package_path(@conn, :show, package.name) %>
+            <% is_active_class = maybe_is_active_class(@conn.assigns, package.name) %>
+            <%= link(package.name, to: package_path, class: is_active_class) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>

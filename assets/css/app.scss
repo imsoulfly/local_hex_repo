@@ -1,0 +1,173 @@
+@charset "utf-8";
+
+$link: #009090;
+
+@import "bulma";
+
+
+h2 {
+  margin-bottom: 12px;
+}
+
+header {
+  text-align: center;
+  background: #373f52;
+  padding: 12px 0;
+}
+
+header a,
+header a:hover {
+  color: #fff;
+  padding: 6px 14px;
+}
+
+.pre {
+  background-color: #f5f5f5;
+  color: #4a4a4a;
+  font-size: 0.875em;
+  overflow-x: auto;
+  padding: 1.25rem 1.5rem;
+  word-wrap: normal;
+  font-family: monospace;
+  margin-top: 4px;
+  margin-bottom: 24px;
+}
+
+.pre table th {
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+.pre table td {
+  padding: 0 48px 0 0;
+}
+
+.table th {
+  border-top: 0;
+}
+
+.table tfoot td {
+  border: 0;
+}
+
+.table th,
+.table td {
+  border-left: 0;
+  border-right: 0;
+  vertical-align: middle;
+}
+
+/* Navbar */
+
+nav.navbar {
+  /*background: #fdfdfd;*/
+  background-color: #1c3778;
+  background-image: radial-gradient(circle at 75% -100%, #2a3cc5, #3131b3 50%, #234eb7);
+  border-bottom: 1px solid #eaeaea;
+}
+
+nav.navbar h1.title {
+  color: #fff;
+  font-size: 1.4em;
+  font-variant: small-caps;
+}
+
+/* Sidebar */
+
+.sidebar {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  padding: 24px;
+  background: #fff;
+  transition: left 0.3s ease-in-out;
+  box-shadow: 0 0 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar__open {
+  left: 0;
+}
+
+.sidebar__toggle {
+  position: fixed;
+  z-index: 40;
+  top: 13px;
+  left: 10px;
+  color: #fff;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sidebar__toggle span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  margin-bottom: 5px;
+  position: relative;
+  background: #fff;
+  border-radius: 3px;
+  transform-origin: 4px 0px;
+  transition: transform 0.3s cubic-bezier(0.77, 0.2, 0.77, 1), background 0.3s cubic-bezier(0.07, 0.2, 0.77, 1), opacity 0.55s ease;
+}
+
+.sidebar span:first-child {
+  transform-origin: 0% 0%;
+}
+
+.sidebar__open span:nth-last-child(1) {
+  transform-origin: 0% 100%;
+}
+
+.sidebar__open span {
+  opacity: 1;
+  transform: rotate(45deg) translate(0, -1px);
+  background: #666;
+}
+
+.sidebar__open span:nth-last-child(2) {
+  opacity: 0;
+  transform: rotate(0deg) scale(0.2, 0.2);
+}
+
+.sidebar__open span:nth-last-child(1) {
+  transform: rotate(-45deg) translate(0, -1px);
+}
+
+.sidebar__inner {
+  margin-top: 60px;
+}
+
+/* Collapsible */
+
+.collapsible__toggle {
+  cursor: pointer;
+}
+
+.collapsible__toggle .icon {
+  transition: transform 0.1s;
+  float: right;
+}
+
+.collapsible__open .collapsible__toggle .icon {
+  transform: rotate(90deg);
+}
+
+.collapsible__container {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  transition: all 0.5s ease;
+}
+
+.collapsible__open .collapsible__container {
+  padding: 12px 0 0;
+  max-height: 1000px;
+  overflow-y: scroll;
+  opacity: 1;
+}

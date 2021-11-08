@@ -42,6 +42,13 @@ config :mime, :types, %{
   "application/vnd.hex+erlang" => ["hex"]
 }
 
+config :dart_sass,
+  version: "1.36.0",
+  default: [
+    args: ~w(--load-path=../deps/bulma css:../priv/static/assets),
+    cd: Path.expand("../assets", __DIR__)
+  ]
+
 if Mix.env() == :dev do
   config :mix_test_watch,
     tasks: [

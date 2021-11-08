@@ -69,10 +69,4 @@ defmodule LocalHexWeb.StorageController do
     |> put_resp_header("content-disposition", "attachment; filename=\"public_key.pem\"")
     |> send_resp(200, repository.public_key)
   end
-
-  defp repository_config do
-    Application.fetch_env!(:local_hex, :repositories)
-    |> Keyword.fetch!(:main)
-    |> Repository.init()
-  end
 end

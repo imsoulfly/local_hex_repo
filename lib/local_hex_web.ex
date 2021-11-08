@@ -22,7 +22,14 @@ defmodule LocalHexWeb do
       use Phoenix.Controller, namespace: LocalHexWeb
 
       import Plug.Conn
+      alias LocalHex.Repository
       alias LocalHexWeb.Router.Helpers, as: Routes
+
+      defp repository_config do
+        Application.fetch_env!(:local_hex, :repositories)
+        |> Keyword.fetch!(:main)
+        |> Repository.init()
+      end
     end
   end
 
@@ -34,7 +41,7 @@ defmodule LocalHexWeb do
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
-        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1, action_name: 1]
 
       # Include shared imports and aliases for views
       unquote(view_helpers())
@@ -86,6 +93,9 @@ defmodule LocalHexWeb do
       import Phoenix.View
 
       alias LocalHexWeb.Router.Helpers, as: Routes
+
+      def maybe_is_active_class(%{package: %{name: name}}, name), do: "is-active"
+      def maybe_is_active_class(_, _), do: ""
     end
   end
 

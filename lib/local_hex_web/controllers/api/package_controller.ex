@@ -82,10 +82,4 @@ defmodule LocalHexWeb.API.PackageController do
         {:error, reason}
     end
   end
-
-  defp repository_config do
-    Application.fetch_env!(:local_hex, :repositories)
-    |> Keyword.fetch!(:main)
-    |> Repository.init()
-  end
 end

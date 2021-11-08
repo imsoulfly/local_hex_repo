@@ -1,0 +1,45 @@
+<table class="table is-fullwidth is-bordered">
+  <thead>
+    <tr>
+      <th colspan="4">
+        <span class="anchor" id="{@package.name}"></span>
+        <%= @package.name %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for version <- @package.versions |> Enum.sort_by(&Version.parse!/1, :desc) |> Enum.take(3)  do %>
+      <tr>
+      <td></td>
+      <td>
+        <%= version %>
+      </td>
+      <td>
+        Docs coming soon
+      </td>
+      <td>
+        <div class="field has-addons">
+          <div class="control is-expanded">
+            <input class="input" id={package_dom_id(@package, version)} type="text" value={package_clipboard(@repo, @package, version)}>
+          </div>
+          <div class="control">
+            <button class="button cp-btn" type="button" data-clipboard-action="copy" data-clipboard-target={"#" <> package_dom_id(@package, version)}>
+              copy
+            </button>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+
+  <%= if action_name(@conn) == :index do %>
+    <tfoot>
+      <tr>
+        <td class="has-text-right" colspan="4">
+          <%= link "Show all versions", to: Routes.package_path(@conn, :show, @package.name) %>
+        </td>
+      </tr>
+    </tfoot>
+  <% end %>
+</table>

@@ -23,10 +23,7 @@ defmodule LocalHexWeb.Router do
     pipe_through :browser
 
     get "/", PackageController, :index
-    # Endpoint for showing all version of a package
-    # get "/all_versions/:name", PackageController, :show
-
-    # Candidates for endpoints take from HEX API spec
+    get "/package/:name", PackageController, :show
 
     get "/names", StorageController, :names
     get "/versions", StorageController, :versions
@@ -43,11 +40,8 @@ defmodule LocalHexWeb.Router do
   scope "/api", LocalHexWeb.API do
     pipe_through :api
 
-    # Candidates for endpoints taken from HEX API specs
-
     post "/publish", PackageController, :publish
 
-    # First necessary batch
     scope "/packages/:name/releases/:version" do
       delete "/", PackageController, :revert
       post "/retire", PackageController, :retire
@@ -56,16 +50,7 @@ defmodule LocalHexWeb.Router do
       post "/docs", PackageController, :publish_docs
     end
 
-    # Reminder to add account authentication as well
+    # Reminder to add account authentication as well if needed later
     # get "/users/me", ErrorController, :not_found
-  end
-
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
-
-    scope "/" do
-      pipe_through :browser
-      # live_dashboard "/dashboard", metrics: LocalHexWeb.Telemetry
-    end
   end
 end

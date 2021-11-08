@@ -40,6 +40,36 @@ defmodule LocalHex.Registry do
     end)
   end
 
+  def all_versions_of_packages(registry) do
+    registry
+    |> Map.keys()
+    |> Enum.map(fn package_name ->
+      versions =
+        registry[package_name]
+        |> Enum.map(fn entry -> entry[:version] end)
+        |> Enum.sort()
+
+      %{
+        name: package_name,
+        internal: true,
+        versions: versions
+      }
+    end)
+  end
+
+  def all_versions_of_package(registry, package_name) do
+    versions =
+      registry[package_name]
+      |> Enum.map(fn entry -> entry[:version] end)
+      |> Enum.sort()
+
+    %{
+      name: package_name,
+      internal: true,
+      versions: versions
+    }
+  end
+
   def has_version?(registry, package_name, version) do
     registry[package_name]
     |> Enum.any?(fn release ->

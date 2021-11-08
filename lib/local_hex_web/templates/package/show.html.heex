@@ -1,0 +1,11 @@
+<section class="section">
+  <%= render LocalHexWeb.PackageView, "_package.html",
+    package: @package,
+    conn: @conn,
+    repo: @repo
+  %>
+</section>
+
+<section class="section has-text-right">
+  <%= link "Back to list", to: "/" %>
+</section>

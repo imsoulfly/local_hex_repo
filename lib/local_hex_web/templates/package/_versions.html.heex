@@ -1,0 +1,25 @@
+<% package = assigns[:package] %>
+<% limit = assigns[:limit] || length(package.versions) %>
+<%= for version <- package.versions |> Enum.sort_by(&Version.parse!/1, :desc) |> Enum.take(limit)  do %>
+  <tr>
+    <td>
+    </td>
+    <td>
+      <%= version %>
+    </td>
+    <td>
+      <a href="{Routes.package_path(@conn, :documentation, package.name, version)}" target="_blank">Docs</a>
+
+    </td>
+    <td>
+      <div class="input-group">
+        <input id="{package.name}-{version}" type="text" value="{:{package.name}, &quot;~> {version}&quot;, repo: :{@repo}}" >
+        <span class="input-group-button">
+          <button class="cp-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#{package.name}-{version}">
+            copy
+          </button>
+        </span>
+      </div>
+    </td>
+  </tr>
+<% end %>

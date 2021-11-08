@@ -1,0 +1,67 @@
+<section class="section">
+  <div class="collapsible" id="collapsible">
+    <button class="button collapsible__toggle">Show setup guide</button>
+    <div class="collapsible__container">
+      <p>For local development add the repo using mix:</p>
+
+      <div class="pre">
+        $ wget -q <%= Routes.url(@conn) %>/<%= @repo.name %>_public.pem
+        <br />
+        $ mix hex.repo add <%= @repo.name %> <%= Routes.url(@conn) %> --public-key
+        <%= @repo.name %>_public.pem
+        <br />
+        $ rm -f <%= @repo.name %>_public.pem
+      </div>
+
+      <p>To verify that mix is aware of the new repository:</p>
+
+      <div class="pre">
+        <p>
+          $ mix hex.repo list
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>URL</th>
+              <th>Public key</th>
+              <th>Auth key</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <%= @repo.name %>
+              </td>
+              <td>
+                <%= Routes.url(@conn) %>
+              </td>
+              <td>
+                SHA256:w6Y0FECtU/UdA//tTMJ63NNc1Glj79WBhKiDWZM33iU
+              </td>
+            </tr>
+            <tr>
+              <td>
+                hexpm
+              </td>
+              <td>
+                https://repo.hex.pm
+              </td>
+              <td>
+                SHA256:O1LOYhHFW4kcrblKAxROaDEzLD8bn1seWbe5tq8TRskh
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Point dependencies to the internal repository from your mix.exs:</p>
+
+      <div class="pre">
+        {:jason, "~> 1.0"},
+        <br />
+        {:your_library, "~> 0.8.3", repo: <%= @repo.name %>},
+      </div>
+    </div>
+  </div>
+</section>

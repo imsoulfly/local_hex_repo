@@ -41,6 +41,8 @@ defmodule LocalHex.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bulma, "0.9.3"},
+      {:dart_sass, "~> 0.3.0"},
       {:ecto_sql, "~> 3.6"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.25", only: :dev, runtime: false},
@@ -86,7 +88,7 @@ defmodule LocalHex.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["sass default --no-source-map --style=compressed", "esbuild default --minify", "phx.digest"]
     ]
   end
 end
