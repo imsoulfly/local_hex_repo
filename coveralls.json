@@ -2,6 +2,7 @@
   "skip_files": [
     "application.ex",
     "telemetry.ex",
+    "local_hex_web.ex",
     "test"
   ]
 }

@@ -1,12 +1,14 @@
 defmodule LocalHex.RegistryTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
+
+  alias LocalHex.{Package, Registry}
 
   describe "#add_package" do
     test "#add_package to empty registry" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
-      registry = LocalHex.Registry.add_package(%{}, package)
+      registry = Registry.add_package(%{}, package)
 
       expected_registry = %{
         "example_lib" => [
@@ -36,14 +38,14 @@ defmodule LocalHex.RegistryTest do
 
     test "#add_package to registry with another version of the package" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
-      registry = LocalHex.Registry.add_package(%{}, package)
+      registry = Registry.add_package(%{}, package)
 
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.2.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
-      registry = LocalHex.Registry.add_package(registry, package)
+      registry = Registry.add_package(registry, package)
 
       expected_registry = %{
         "example_lib" => [
@@ -91,14 +93,14 @@ defmodule LocalHex.RegistryTest do
 
     test "#add_package to registry with another existing package" do
       {:ok, tarball} = File.read("./test/fixtures/another_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
-      registry = LocalHex.Registry.add_package(%{}, package)
+      registry = Registry.add_package(%{}, package)
 
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
-      registry = LocalHex.Registry.add_package(registry, package)
+      registry = Registry.add_package(registry, package)
 
       expected_registry = %{
         "another_lib" => [
@@ -150,11 +152,11 @@ defmodule LocalHex.RegistryTest do
   describe "#retire_package_release" do
     test "marks a release as retired" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.retire_package_release(
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
           package.name,
           "0.1.0",
           "invalid",
@@ -174,17 +176,17 @@ defmodule LocalHex.RegistryTest do
 
     test "updates the retired state of a release" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.retire_package_release(
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
           package.name,
           "0.1.0",
           "invalid",
           "some_message"
         )
-        |> LocalHex.Registry.retire_package_release(
+        |> Registry.retire_package_release(
           package.name,
           "0.1.0",
           "security",
@@ -204,11 +206,11 @@ defmodule LocalHex.RegistryTest do
 
     test "does nothing on missing version" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.retire_package_release(
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
           package.name,
           "0.2.0",
           "invalid",
@@ -221,14 +223,55 @@ defmodule LocalHex.RegistryTest do
     end
   end
 
+  describe "#all_versions_of_packages" do
+    test "lists version of all published packages" do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, package} = Package.load_from_tarball(tarball)
+      registry = Registry.add_package(%{}, package)
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.2.0.tar")
+      {:ok, package} = Package.load_from_tarball(tarball)
+      registry = Registry.add_package(registry, package)
+
+      {:ok, tarball} = File.read("./test/fixtures/another_lib-0.1.0.tar")
+      {:ok, package} = Package.load_from_tarball(tarball)
+      registry = Registry.add_package(registry, package)
+
+      expected = [
+        %{internal: true, name: "another_lib", versions: ["0.1.0"]},
+        %{internal: true, name: "example_lib", versions: ["0.1.0", "0.2.0"]}
+      ]
+
+      result = Registry.all_versions_of_packages(registry)
+      assert result == expected
+    end
+  end
+
+  describe "#all_versions_of_package" do
+    test "lists version of a single published package" do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, package} = Package.load_from_tarball(tarball)
+      registry = Registry.add_package(%{}, package)
+
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.2.0.tar")
+      {:ok, package} = Package.load_from_tarball(tarball)
+      registry = Registry.add_package(registry, package)
+
+      expected = %{internal: true, name: "example_lib", versions: ["0.1.0", "0.2.0"]}
+
+      result = Registry.all_versions_of_package(registry, "example_lib")
+      assert result == expected
+    end
+  end
+
   describe "#unretire_package_release" do
     test "removes a :retired entry from a release" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.retire_package_release(
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
           package.name,
           "0.1.0",
           "invalid",
@@ -239,7 +282,7 @@ defmodule LocalHex.RegistryTest do
 
       assert Map.has_key?(result, :retired)
 
-      registry = LocalHex.Registry.unretire_package_release(registry, package.name, "0.1.0")
+      registry = Registry.unretire_package_release(registry, package.name, "0.1.0")
       result = registry["example_lib"] |> List.first()
 
       refute Map.has_key?(result, :retired)
@@ -247,11 +290,11 @@ defmodule LocalHex.RegistryTest do
 
     test "is idempotent" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.retire_package_release(
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
           package.name,
           "0.1.0",
           "invalid",
@@ -263,8 +306,8 @@ defmodule LocalHex.RegistryTest do
       assert Map.has_key?(result, :retired)
 
       registry =
-        LocalHex.Registry.unretire_package_release(registry, package.name, "0.1.0")
-        |> LocalHex.Registry.unretire_package_release(package.name, "0.1.0")
+        Registry.unretire_package_release(registry, package.name, "0.1.0")
+        |> Registry.unretire_package_release(package.name, "0.1.0")
 
       result = registry["example_lib"] |> List.first()
 
@@ -273,11 +316,11 @@ defmodule LocalHex.RegistryTest do
 
     test "does nothing on missing version" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.retire_package_release(
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
           package.name,
           "0.1.0",
           "invalid",
@@ -288,7 +331,7 @@ defmodule LocalHex.RegistryTest do
 
       assert Map.has_key?(result, :retired)
 
-      registry = LocalHex.Registry.unretire_package_release(registry, package.name, "0.2.0")
+      registry = Registry.unretire_package_release(registry, package.name, "0.2.0")
       result = registry["example_lib"] |> List.first()
 
       assert Map.has_key?(result, :retired)
@@ -298,34 +341,34 @@ defmodule LocalHex.RegistryTest do
   describe "#revert_release" do
     test "removes a release from a package" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.revert_release(package.name, "0.1.0")
+        Registry.add_package(%{}, package)
+        |> Registry.revert_release(package.name, "0.1.0")
 
       assert Enum.empty?(registry["example_lib"])
     end
 
     test "is idempotent" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.revert_release(package.name, "0.1.0")
-        |> LocalHex.Registry.revert_release(package.name, "0.1.0")
+        Registry.add_package(%{}, package)
+        |> Registry.revert_release(package.name, "0.1.0")
+        |> Registry.revert_release(package.name, "0.1.0")
 
       assert Enum.empty?(registry["example_lib"])
     end
 
     test "does nothing on missing version" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
-      {:ok, package} = LocalHex.Package.load_from_tarball(tarball)
+      {:ok, package} = Package.load_from_tarball(tarball)
 
       registry =
-        LocalHex.Registry.add_package(%{}, package)
-        |> LocalHex.Registry.revert_release(package.name, "0.2.0")
+        Registry.add_package(%{}, package)
+        |> Registry.revert_release(package.name, "0.2.0")
 
       refute Enum.empty?(registry["example_lib"])
     end

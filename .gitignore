@@ -27,6 +27,7 @@ local_hex-*.tar
 /priv/static/assets/
 /priv/static/test_storage/
 /priv/static/storage/
+/priv/static/docs/
 /priv/repos/
 /priv/test_repos/
 

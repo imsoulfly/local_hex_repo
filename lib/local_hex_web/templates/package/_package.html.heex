@@ -15,7 +15,7 @@
         <%= version %>
       </td>
       <td>
-        Docs coming soon
+        <%= link "Docs", to: Routes.documentation_path(@conn, :show, @package.name, version), target: "_blank" %>
       </td>
       <td>
         <div class="field has-addons">

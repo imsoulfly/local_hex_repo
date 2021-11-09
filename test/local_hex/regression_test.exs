@@ -22,13 +22,14 @@ defmodule LocalHex.RegressionTest do
         # for publishing
         api_key: "test_token",
         api_url: "http://localhost:4002/api",
-        http_adapter: {:hex_http_httpc, %{
-          profile: :default,
-          http_options: [
-            ssl: [verify: :verify_none, reuse_sessions: false]
-          ]
-        }
-      }
+        http_adapter:
+          {:hex_http_httpc,
+           %{
+             profile: :default,
+             http_options: [
+               ssl: [verify: :verify_none, reuse_sessions: false]
+             ]
+           }}
     }
 
     {:ok, {404, _, _}} = :hex_repo.get_names(config)
@@ -76,13 +77,5 @@ defmodule LocalHex.RegressionTest do
     {:ok, {201, _, _}} = :hex_api_release.unretire(config, "foo", "1.0.0")
     {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
     assert packages == [%{name: "foo", retired: [], versions: ["1.0.0"]}]
-
-    # assert {:ok, {201, _, _}} = publish_docs(config, "foo", "1.0.0", {'text/plain', "foo"})
-    # assert {:ok, {200, _, "foo"}} = get_docs(config, "foo", "1.0.0")
-
-    # {:ok, {204, _, _}} = :hex_api_release.delete(config, "foo", "1.0.0")
-
-    # {:ok, {200, _, packages}} = :hex_repo.get_names(config)
-    # assert packages == []
   end
 end

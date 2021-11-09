@@ -15,6 +15,9 @@ defmodule LocalHex.StorageCase do
     on_exit(fn ->
       root_path()
       |> File.rm_rf()
+
+      docs_root_path(repository_config())
+      |> File.rm_rf()
     end)
 
     :ok
@@ -33,5 +36,15 @@ defmodule LocalHex.StorageCase do
   def root_path do
     path = Application.fetch_env!(:local_hex, :repositories_path)
     Path.join(Application.app_dir(:local_hex), path)
+  end
+
+  def docs_root_path(repository) do
+    Path.join([
+      Application.app_dir(:local_hex),
+      "priv",
+      "static",
+      "docs",
+      repository.name
+    ])
   end
 end
