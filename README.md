@@ -114,10 +114,10 @@ Using your locally hosted libraries in your application is quite simple by speci
 
 ```
 defp deps do
-	[
-	   {:phoenix, "~> 1.6.0"},
-	   {:your_library, "~> 1.1.3", repo: :local_hex}
-	]
+  [
+     {:phoenix, "~> 1.6.0"},
+     {:your_library, "~> 1.1.3", repo: :local_hex}
+  ]
 end
 ```
 
