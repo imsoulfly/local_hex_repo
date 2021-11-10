@@ -1,8 +1,8 @@
 defmodule LocalHex.Registry do
   @moduledoc """
-  Module meant for maintaining a registry of available packages of of a repository.
+  Module meant for maintaining a registry of available packages of a repository.
 
-  Current the `Registry` is kept in a simple Map structure and looks like the follwing:
+  Current `Registry` is kept in a simple Map structure and looks like the following:
 
   ```
   %{
@@ -43,18 +43,7 @@ defmodule LocalHex.Registry do
   def all_versions_of_packages(registry) do
     registry
     |> Map.keys()
-    |> Enum.map(fn package_name ->
-      versions =
-        registry[package_name]
-        |> Enum.map(fn entry -> entry[:version] end)
-        |> Enum.sort()
-
-      %{
-        name: package_name,
-        internal: true,
-        versions: versions
-      }
-    end)
+    |> Enum.map(&all_versions_of_package(registry, &1))
   end
 
   def all_versions_of_package(registry, package_name) do
