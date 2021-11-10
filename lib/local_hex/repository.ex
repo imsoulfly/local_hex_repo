@@ -2,7 +2,7 @@ defmodule LocalHex.Repository do
   @moduledoc """
   Module meant for maintaining a repository of multiple library packages.
 
-  A `%Repository{}` struct consists of the its config plus the actual list of packages and their
+  A `%Repository{}` struct consists of its config plus the actual list of packages and their
   releases.
 
   * `name` - Name of the repository as it's being stored and also accessed via the api

@@ -50,7 +50,7 @@ defmodule LocalHex.Registry.Builder do
   }
   ```
 
-  __Format of `packags`__
+  __Format of `packages`__
   Known representation from the runtime `LocalHex.Registry`
 
   ```
