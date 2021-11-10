@@ -4,7 +4,7 @@ defmodule LocalHexWeb.HexErlangParser do
   and handle `vnd.hex+erlang` content type
 
   Apache OS notice:
-  The source orginal was taken from here:
+  The original source was taken from here:
   https://github.com/wojtekmach/mini_repo/blob/master/lib/mini_repo/hex_erlang_parser.ex
   """
 
