@@ -6,11 +6,10 @@ import Config
 #
 # config :local_hex,
 #   auth_token: "production_token",
-#   repositories_path: "priv/repos/",
 #   repositories: [
 #     main: [
 #       name: "local_hex",
-#       store: :local,
+#       store: {LocalHex.Storage.Local, root: "priv/repos/"},
 #       private_key: File.read!(Path.expand("../path/to/private_key.pem", __DIR__)),
 #       public_key: File.read!(Path.expand("../path/to/public_key.pem", __DIR__))
 #     ]

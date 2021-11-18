@@ -18,10 +18,18 @@ defmodule LocalHex.Repository do
 
   @manifest_vsn 1
 
+  @type t :: %{
+    name: binary,
+    store: {atom, keyword()},
+    registry: map(),
+    public_key: binary,
+    private_key: binary
+  }
+
   @derive {Inspect, only: [:name, :public_key, :store, :registry]}
   @enforce_keys [:name, :public_key, :private_key, :store]
   defstruct name: "localhex",
-            store: :local,
+            store: {LocalHex.Storage.Local, root: {:local_hex, "priv/repos/"}},
             registry: %{},
             public_key: nil,
             private_key: nil

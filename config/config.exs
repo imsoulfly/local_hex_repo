@@ -5,16 +5,6 @@ config :local_hex,
   ecto_repos: [LocalHex.Repo],
   storage: [
     root_path: "./priv/static/storage"
-  ],
-  auth_token: "local_token",
-  repositories_path: "priv/repos/",
-  repositories: [
-    main: [
-      name: "local_hex_dev",
-      store: :local,
-      private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
-      public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
-    ]
   ]
 
 config :local_hex, LocalHexWeb.Endpoint,

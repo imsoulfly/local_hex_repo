@@ -12,7 +12,7 @@ defmodule LocalHex.RepositoryTest do
 
       assert repository == %Repository{
                name: "test",
-               store: :local,
+               store: {LocalHex.Storage.Local, [root: "priv/test_repos/"]},
                registry: %{},
                private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
                public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
@@ -30,7 +30,7 @@ defmodule LocalHex.RepositoryTest do
 
       assert repository == %Repository{
                name: "test",
-               store: :local,
+               store: {LocalHex.Storage.Local, [root: "priv/test_repos/"]},
                registry: %{},
                private_key: File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__)),
                public_key: File.read!(Path.expand("../fixtures/test_public_key.pem", __DIR__))
@@ -49,7 +49,7 @@ defmodule LocalHex.RepositoryTest do
       assert File.exists?(path(repository, ["test.bin"]))
 
       assert repository.name == "test"
-      assert repository.store == :local
+      assert repository.store == {LocalHex.Storage.Local, [root: "priv/test_repos/"]}
 
       assert repository.private_key ==
                File.read!(Path.expand("../fixtures/test_private_key.pem", __DIR__))
