@@ -1,5 +1,13 @@
 import Config
 
+storage_config = {LocalHex.Storage.Local, root: "priv/test_repos/"}
+# storage_config =
+#   {LocalHex.Storage.S3,
+#    bucket: "localhex",
+#    options: [
+#      region: "europe"
+#    ]}
+
 config :local_hex,
   storage: [
     root_path: "priv/static/test_storage"
@@ -8,7 +16,7 @@ config :local_hex,
   repositories: [
     main: [
       name: "test",
-      store: {LocalHex.Storage.Local, root: "priv/test_repos/"},
+      store: storage_config,
       private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
       public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
     ]

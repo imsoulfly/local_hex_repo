@@ -1,11 +1,27 @@
 import Config
 
+config :ex_aws, :s3,
+  access_key_id: "123456789",
+  secret_access_key: "123456789",
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  region: "local"
+
+# storage_config = {LocalHex.Storage.Local, root: "priv/repos/"},
+storage_config =
+  {LocalHex.Storage.S3,
+   bucket: "localhex",
+   options: [
+     region: "local"
+   ]}
+
 config :local_hex,
   auth_token: "local_token",
   repositories: [
     main: [
       name: "local_hex_dev",
-      store: {LocalHex.Storage.Local, root: "priv/repos/"},
+      store: storage_config,
       private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
       public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
     ]
