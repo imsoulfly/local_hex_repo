@@ -1,6 +1,19 @@
 defmodule LocalHex.Storage.Local do
   @moduledoc """
   Adapter module to provide local file system abilities
+
+  In the config files (ex. config.exs) you can configure each repository individually by
+  providing a `:store` field that contains a tuple with the details.
+  ```
+  config :local_hex,
+    auth_token: "local_token",
+    repositories: [
+      main: [
+        name: "local_hex_dev",
+        store: {LocalHex.Storage.Local, root: "priv/repos/"},
+        ...
+      ]
+  ```
   """
 
   @behaviour LocalHex.Storage

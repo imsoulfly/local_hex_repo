@@ -50,12 +50,76 @@ config :local_hex,
 
 * __name__: Name of the repository which also is used in the `hex.config` and `deps` configuration
 
-* __store__: Currently it's only possible to choose `LocalHex.Storage.Local` to store packages. More adapters are planned like `S3` and other protocols. See the Adapter modules for their configuration
+* __store__: Currently it's only possible to choose `LocalHex.Storage.(Local | S3)` to store packages. In case more is need it is pretty easy to write another adapter. Also see the adapter modules for their configuration.
 
 * __private_key__: Private key generated via `ssh` or any other way. This is used to sign packages. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
 
 * __public_key__: Public key material for you private key. This is used to validate published packages with the private key. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
 
+
+## Additional storage adapters
+
+### Local
+
+The `LocalHex.Storage.Local` adapter writes data directly to the local filesystem.
+
+In the config files (ex. config.exs) you can configure each repository individually by
+providing a `:store` field that contains a tuple with the details.
+
+In the second element in we have keyword list containing a `:root` field defining the preferred location of your repo
+```
+config :local_hex,
+  auth_token: "secret_production_token",
+  repositories: [
+    main: [
+      name: "local_hex",
+      store: {LocalHex.Storage.Local, root: {:local_hex, "priv/repos/"}},
+      private_key: File.read!(Path.expand("../path/to/private_key.pem", __DIR__)),
+      public_key: File.read!(Path.expand("../path/to/public_key.pem", __DIR__))
+    ]
+  ]
+```
+
+### S3 with ExAWS
+
+The `LocalHex.Storage.S3` adapter writes data directly to any S3 compatible storage system (AWS, S3, MinIO, etc.).
+
+In the config files (ex. config.exs) you can configure each repository individually by
+providing a `:store` field that contains a tuple with the details.
+
+In the second element in we have keyword list containing a `:bucket` and `:options` field defining the preferred bucket plus additional
+options to be used when communicating with the storage (see ExAWS config).
+
+Additionally you need to configure `ex_aws` as well to be able to connect properly to a server and bucket
+of your choice. More details you find here [ExAWS](https://github.com/ex-aws/ex_aws/blob/master/lib/ex_aws/config.ex)
+
+```
+config :ex_aws, :s3,
+  access_key_id: "123456789",
+  secret_access_key: "123456789",
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  region: "local"
+
+storage_config =
+  {LocalHex.Storage.S3,
+   bucket: "localhex",
+   options: [
+     region: "local"
+   ]}
+
+config :local_hex,
+  auth_token: "local_token",
+  repositories: [
+    main: [
+      name: "local_hex_dev",
+      store: storage_config,
+      ...
+    ]
+  ]
+
+```
 
 ## Publish packages
 
