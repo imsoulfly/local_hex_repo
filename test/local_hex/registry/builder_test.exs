@@ -1,4 +1,4 @@
-defmodule LocalHex.BuilderTest do
+defmodule LocalHex.Registry.BuilderTest do
   use LocalHex.StorageCase
 
   alias LocalHex.Registry.Builder

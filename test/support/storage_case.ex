@@ -13,10 +13,12 @@ defmodule LocalHex.StorageCase do
 
   setup _tags do
     on_exit(fn ->
-      root_path()
+      repository = repository_config()
+
+      root_path(repository.store)
       |> File.rm_rf()
 
-      docs_root_path(repository_config())
+      docs_root_path(repository)
       |> File.rm_rf()
     end)
 
@@ -30,11 +32,10 @@ defmodule LocalHex.StorageCase do
   end
 
   def path(repository, path) do
-    Path.join([root_path(), repository.name | List.wrap(path)])
+    Path.join([root_path(repository.store), repository.name | List.wrap(path)])
   end
 
-  def root_path do
-    path = Application.fetch_env!(:local_hex, :repositories_path)
+  def root_path({_module, root: path}) do
     Path.join(Application.app_dir(:local_hex), path)
   end
 

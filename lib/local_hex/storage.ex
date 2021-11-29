@@ -9,7 +9,16 @@ defmodule LocalHex.Storage do
 
   require Logger
 
-  alias LocalHex.{Documentation, Package}
+  alias LocalHex.{Documentation, Package, Repository}
+
+  @callback write(repository :: Repository.t(), path :: binary, value :: binary) ::
+              :ok | {:error, term}
+
+  @callback read(repository :: Repository.t(), path :: binary) ::
+              {:ok, binary} | {:error, term}
+
+  @callback delete(repository :: Repository.t(), path :: binary) ::
+              :ok | {:error, term}
 
   def write_repository(repository, content) do
     write(repository, repository_file_path(repository), content)
@@ -36,11 +45,8 @@ defmodule LocalHex.Storage do
   end
 
   def write(repository, path, value) do
-    path = path(repository, path)
-    Logger.debug(inspect({__MODULE__, :write, path}))
-
-    File.mkdir_p!(Path.dirname(path))
-    File.write(path, value)
+    {adapter_module, _} = repository.store
+    adapter_module.write(repository, path, value)
   end
 
   def read_repository(repository) do
@@ -68,37 +74,13 @@ defmodule LocalHex.Storage do
   end
 
   def read(repository, path) do
-    path = path(repository, path)
-    Logger.debug(inspect({__MODULE__, :read, path}))
-
-    case File.read(path) do
-      {:ok, contents} ->
-        Logger.debug(inspect({__MODULE__, :read, :successful}))
-        {:ok, contents}
-
-      {:error, :enoent} ->
-        Logger.debug(inspect({__MODULE__, :read, :not_found}))
-        {:error, :not_found}
-
-      other ->
-        other
-    end
+    {adapter_module, _} = repository.store
+    adapter_module.read(repository, path)
   end
 
   def delete(repository, path) do
-    path = path(repository, path)
-    Logger.debug(inspect({__MODULE__, :delete, path}))
-
-    case File.rm(path) do
-      :ok ->
-        :ok
-
-      {:error, :enoent} ->
-        {:error, :not_found}
-
-      other ->
-        other
-    end
+    {adapter_module, _} = repository.store
+    adapter_module.delete(repository, path)
   end
 
   defp repository_file_path(repository) do
@@ -131,14 +113,5 @@ defmodule LocalHex.Storage do
 
   defp docs_tarball_path(tarball) do
     ["docs", tarball]
-  end
-
-  defp path(repository, path) do
-    Path.join([root_path(), repository.name | List.wrap(path)])
-  end
-
-  defp root_path do
-    path = Application.fetch_env!(:local_hex, :repositories_path)
-    Path.join(Application.app_dir(:local_hex), path)
   end
 end

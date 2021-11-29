@@ -36,7 +36,7 @@ defmodule LocalHexWeb.ConnCase do
   setup _tags do
     # pid = Sandbox.start_owner!(LocalHex.Repo, shared: not tags[:async])
     on_exit(fn ->
-      root_path()
+      root_path(repository_config().store)
       |> File.rm_rf()
 
       # Sandbox.stop_owner(pid)
@@ -52,11 +52,10 @@ defmodule LocalHexWeb.ConnCase do
   end
 
   def path(repository, path) do
-    Path.join([root_path(), repository.name | List.wrap(path)])
+    Path.join([root_path(repository.store), repository.name | List.wrap(path)])
   end
 
-  def root_path do
-    path = Application.fetch_env!(:local_hex, :repositories_path)
+  def root_path({_module, root: path}) do
     Path.join(Application.app_dir(:local_hex), path)
   end
 end

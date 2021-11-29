@@ -9,16 +9,17 @@ This project was inspired by the [MiniRepo](https://github.com/wojtekmach/mini_r
 
 ## Features
 
-* Publishing packages / documentation
-* Functionial HEX API to provide dependencies for your apps
-* Local file storage
+* Hosting Elixir private libraries
+* Publishing packages and their documentation
+* Functionial HEX API to provide you private libraries for your apps
+* Different storage adapter for local filesystem or S3
 * Web UI listing all available libraries/version
 * Web UI also renders the documentation for your Elixir libraries
 
 
 ## Planned Features
 
-* More storage adapters (S3, Swift,...)
+* More storage adapters (AWS.KMS, Swift, ...)
 * Mirroring public Hex libraries
 * Admin UI to configure several things like the mirroring
 * Your suggestions
@@ -33,11 +34,10 @@ For all that to properly work some configuration needs to be activated in the `c
 ```
 config :local_hex,
   auth_token: "secret_production_token",
-  repositories_path: "priv/repos/",
   repositories: [
     main: [
       name: "local_hex",
-      store: :local,
+      store: {LocalHex.Storage.Local, root: {:local_hex, "priv/repos/"}},
       private_key: File.read!(Path.expand("../path/to/private_key.pem", __DIR__)),
       public_key: File.read!(Path.expand("../path/to/public_key.pem", __DIR__))
     ]
@@ -46,13 +46,11 @@ config :local_hex,
 
 * __auth_token__: This token is a secret string of your choice to also be used later by the local or CI/CD environments to authenticate via the `Mix` tool. Suggestion: Best to be provided via ENV vars via your infrastructure to not have it included in your codebase.
 
-* __repositories_path__: The folder where published packages of your libs are stored. In case you are using volumes for Docker instances it might be necessary to customize this for example.
-
 * __repositories__: Currently only the a single `main` repository is possible to be configured.
 
 * __name__: Name of the repository which also is used in the `hex.config` and `deps` configuration
 
-* __store__: Currently it's only possible to choose `:local` to store packages. More adapters are planned like `S3` and other protocols.
+* __store__: Currently it's only possible to choose `LocalHex.Storage.Local` to store packages. More adapters are planned like `S3` and other protocols. See the Adapter modules for their configuration
 
 * __private_key__: Private key generated via `ssh` or any other way. This is used to sign packages. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
 

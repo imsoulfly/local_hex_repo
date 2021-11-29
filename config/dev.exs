@@ -1,5 +1,32 @@
 import Config
 
+config :ex_aws, :s3,
+  access_key_id: "123456789",
+  secret_access_key: "123456789",
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  region: "local"
+
+# storage_config = {LocalHex.Storage.Local, root: "priv/repos/"},
+storage_config =
+  {LocalHex.Storage.S3,
+   bucket: "localhex",
+   options: [
+     region: "local"
+   ]}
+
+config :local_hex,
+  auth_token: "local_token",
+  repositories: [
+    main: [
+      name: "local_hex_dev",
+      store: storage_config,
+      private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
+      public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
+    ]
+  ]
+
 # Configure your database
 config :local_hex, LocalHex.Repo,
   username: "root",
@@ -38,3 +65,14 @@ config :local_hex, LocalHexWeb.Endpoint,
 config :logger, :console, format: "[$level] $message\n"
 config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
+
+config :ex_aws, :s3,
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  region: "europe"
+
+config :ex_aws,
+  access_key_id: "123456789",
+  secret_access_key: "123456789",
+  json_codec: Jason
