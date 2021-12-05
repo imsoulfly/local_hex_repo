@@ -1,6 +1,6 @@
-# LocalHex
+# Local Hex Repository
 
-Make hosting Erlang and Elixir libraries in your local infrastructure easy.
+Hosting Elixir libraries on your own in your own server infrastructure or in your local dev environment.
 
 As a company or out of any other scenario you might want/need the ability to host your own Elixir / Erlang libraries within your internal network. For example when company knowledge legally should not be exposed publicly on [Hex.pm](http://hex.pm).
 
@@ -9,12 +9,13 @@ This project was inspired by the [MiniRepo](https://github.com/wojtekmach/mini_r
 
 ## Features
 
-* Hosting Elixir private libraries
+* Hosting your private Elixir libraries (also Erlang libraries)
 * Publishing packages and their documentation
-* Functionial HEX API to provide you private libraries for your apps
-* Different storage adapter for local filesystem or S3
+* Functionial HEX API to provide your private libraries for your apps
+* Various storage adapter for local filesystem or S3
 * Web UI listing all available libraries/version
 * Web UI also renders the documentation for your Elixir libraries
+* Simple phoenix app which is simple to run or deploy
 
 
 ## Planned Features
