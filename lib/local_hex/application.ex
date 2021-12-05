@@ -11,6 +11,7 @@ defmodule LocalHex.Application do
       # Start the Ecto repository
       # LocalHex.Repo,
       # Start the Telemetry supervisor
+      LocalHex.RepositoryProxy,
       LocalHexWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: LocalHex.PubSub},
