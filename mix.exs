@@ -42,34 +42,34 @@ defmodule LocalHex.MixProject do
   defp deps do
     [
       {:bulma, "0.9.3"},
-      {:dart_sass, "~> 0.3.0"},
-      {:ecto_sql, "~> 3.6"},
-      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.4"},
+      {:ecto_sql, "~> 3.7"},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:ex_aws, "~> 2.2"},
       {:ex_aws_s3, "~> 2.3"},
-      {:ex_doc, "~> 0.25", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:floki, ">= 0.30.0", only: :test},
       {:hackney, "~> 1.18"},
       {:hex_core, "~> 0.8"},
-      {:jason, "~> 1.2"},
+      {:jason, "~> 1.3"},
       {:logger_file_backend, "~> 0.0.12", only: :test},
       {:myxql, ">= 0.0.0"},
       {:phoenix, "~> 1.6.0"},
       {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.16.0"},
-      {:phoenix_live_dashboard, "~> 0.5"},
+      {:phoenix_html, "~> 3.2"},
+      {:phoenix_live_view, "~> 0.17"},
+      {:phoenix_live_dashboard, "~> 0.6"},
       {:plug_cowboy, "~> 2.5"},
       {:sweet_xml, "~> 0.7"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
 
       # dev libraries
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:phoenix_live_reload, "~> 1.2", only: :dev}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
+      {:excoveralls, "~> 0.14", only: :test},
+      {:mix_test_watch, "~> 1.1", only: :dev, runtime: false},
+      {:phoenix_live_reload, "~> 1.3", only: :dev}
     ]
   end
 

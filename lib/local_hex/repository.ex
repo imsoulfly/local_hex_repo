@@ -54,9 +54,8 @@ defmodule LocalHex.Repository do
   end
 
   def publish_docs(repository, name, version, tarball) do
-    with {:ok, documentation} <- Documentation.load(name, version, tarball),
-         :ok <- Storage.write_docs_tarball(repository, documentation) do
-      :ok
+    with {:ok, documentation} <- Documentation.load(name, version, tarball) do
+      Storage.write_docs_tarball(repository, documentation)
     end
   end
 
