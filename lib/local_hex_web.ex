@@ -30,6 +30,12 @@ defmodule LocalHexWeb do
         |> Keyword.fetch!(:main)
         |> Repository.init()
       end
+
+      defp repository_mirror_config do
+        Application.fetch_env!(:local_hex, :repositories)
+        |> Keyword.get(:mirror)
+        |> Repository.init()
+      end
     end
   end
 

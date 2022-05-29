@@ -6,15 +6,17 @@ defmodule LocalHex.Documentation.CacheTest do
 
   test "provides cache_path to documentation after lazily downloading it" do
     repository = repository_config()
-    expected_file_path = Path.join([
-      Application.app_dir(:local_hex),
-      "priv",
-      "static",
-      "docs",
-      repository.name,
-      "example_lib-0.1.0",
-      "index.html"
-    ])
+
+    expected_file_path =
+      Path.join([
+        Application.app_dir(:local_hex),
+        "priv",
+        "static",
+        "docs",
+        repository.name,
+        "example_lib-0.1.0",
+        "index.html"
+      ])
 
     {:ok, tarball} = File.read("./test/fixtures/docs/example_lib-0.1.0.tar")
     :ok = Repository.publish_docs(repository, "example_lib", "0.1.0", tarball)
@@ -38,6 +40,8 @@ defmodule LocalHex.Documentation.CacheTest do
 
   test "return :not_found error on missing documentation tarball to download" do
     repository = repository_config()
-    {:error, :not_found} = Cache.cache_path(repository, %{"name" => "example_lib", "version" => "1.0.0"})
+
+    {:error, :not_found} =
+      Cache.cache_path(repository, %{"name" => "example_lib", "version" => "1.0.0"})
   end
 end

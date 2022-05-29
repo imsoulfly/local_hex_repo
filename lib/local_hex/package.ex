@@ -3,6 +3,23 @@ defmodule LocalHex.Package do
 
   defstruct [:name, :version, :release, :tarball]
 
+  def load_from_filename(name) do
+    name_regex = ~r/\A(?<package_name>.*)-(?<version>\d\.\d\.\d.*).tar\z/
+
+    case Regex.named_captures(name_regex, name) do
+      nil ->
+        {:error, :not_valid}
+
+      captures ->
+        package = %__MODULE__{
+          name: captures["package_name"],
+          version: captures["version"]
+        }
+
+        {:ok, package}
+    end
+  end
+
   def load_from_tarball(tarball) do
     with {:ok, result} <- :hex_tarball.unpack(tarball, :memory),
          :ok <- validate_name(result.metadata),

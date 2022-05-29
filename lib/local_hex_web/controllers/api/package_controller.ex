@@ -1,13 +1,13 @@
 defmodule LocalHexWeb.API.PackageController do
   use LocalHexWeb, :controller
 
-  alias LocalHex.RepositoryProxy
+  alias LocalHex.RepositoryServer
 
   # publish a package
   def publish(conn, _params) do
     {:ok, tarball, conn} = read_tarball(conn)
 
-    case RepositoryProxy.publish(repository_config(), tarball) do
+    case RepositoryServer.publish(repository_config(), tarball) do
       {:ok, _repository} ->
         body =
           %{"url" => Routes.url(conn)}
@@ -25,7 +25,12 @@ defmodule LocalHexWeb.API.PackageController do
   def publish_docs(conn, params) do
     {:ok, tarball, conn} = read_tarball(conn)
 
-    case RepositoryProxy.publish_docs(repository_config(), params["name"], params["version"], tarball) do
+    case RepositoryServer.publish_docs(
+           repository_config(),
+           params["name"],
+           params["version"],
+           tarball
+         ) do
       :ok ->
         send_resp(conn, 201, "")
 
@@ -35,7 +40,7 @@ defmodule LocalHexWeb.API.PackageController do
   end
 
   def revert(conn, params) do
-    case RepositoryProxy.revert(repository_config(), params["name"], params["version"]) do
+    case RepositoryServer.revert(repository_config(), params["name"], params["version"]) do
       {:ok, _repository} ->
         send_resp(conn, 204, "")
 
@@ -45,7 +50,7 @@ defmodule LocalHexWeb.API.PackageController do
   end
 
   def retire(conn, params) do
-    case RepositoryProxy.retire(
+    case RepositoryServer.retire(
            repository_config(),
            params["name"],
            params["version"],
@@ -61,7 +66,7 @@ defmodule LocalHexWeb.API.PackageController do
   end
 
   def unretire(conn, params) do
-    case RepositoryProxy.unretire(repository_config(), params["name"], params["version"]) do
+    case RepositoryServer.unretire(repository_config(), params["name"], params["version"]) do
       {:ok, _} ->
         send_resp(conn, 201, "")
 

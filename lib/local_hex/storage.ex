@@ -78,6 +78,14 @@ defmodule LocalHex.Storage do
     adapter_module.read(repository, path)
   end
 
+  def delete_package(repository, name) do
+    delete(repository, package_path(name))
+  end
+
+  def delete_package_tarball(repository, tarball) do
+    delete(repository, package_tarball_path(tarball))
+  end
+
   def delete(repository, path) do
     {adapter_module, _} = repository.store
     adapter_module.delete(repository, path)
@@ -100,18 +108,32 @@ defmodule LocalHex.Storage do
   end
 
   defp package_tarball_path(%Package{} = package) do
-    ["tarballs", "#{package.name}-#{package.version}.tar"]
+    ["tarballs", package.name, "#{package.name}-#{package.version}.tar"]
   end
 
   defp package_tarball_path(tarball) do
-    ["tarballs", tarball]
+    package_name = extract_name_from_tar_filename(tarball)
+    ["tarballs", package_name, tarball]
   end
 
   defp docs_tarball_path(%Documentation{} = documentation) do
-    ["docs", "#{documentation.name}-#{documentation.version}.tar"]
+    ["docs", documentation.name, "#{documentation.name}-#{documentation.version}.tar"]
   end
 
   defp docs_tarball_path(tarball) do
-    ["docs", tarball]
+    package_name = extract_name_from_tar_filename(tarball)
+    ["docs", package_name, tarball]
+  end
+
+  defp extract_name_from_tar_filename(tarball) do
+    regex = ~r/\A(?<package_name>[a-zA-Z_-]*)-\d\.\d\.\d\.tar\z/
+
+    case Regex.named_captures(regex, tarball) do
+      %{"package_name" => package_name} ->
+        package_name
+
+      _ ->
+        "default"
+    end
   end
 end

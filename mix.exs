@@ -28,7 +28,7 @@ defmodule LocalHex.MixProject do
   def application do
     [
       mod: {LocalHex.Application, []},
-      extra_applications: [:logger, :runtime_tools, :crypto, :inets, :ssl]
+      extra_applications: [:logger, :runtime_tools, :crypto, :inets, :ssl, :hex]
     ]
   end
 
@@ -42,9 +42,9 @@ defmodule LocalHex.MixProject do
   defp deps do
     [
       {:bulma, "0.9.3"},
-      {:dart_sass, "~> 0.4"},
+      {:dart_sass, "~> 0.5"},
       {:ecto_sql, "~> 3.7"},
-      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_aws, "~> 2.2"},
       {:ex_aws_s3, "~> 2.3"},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
@@ -69,6 +69,7 @@ defmodule LocalHex.MixProject do
       {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
       {:excoveralls, "~> 0.14", only: :test},
       {:mix_test_watch, "~> 1.1", only: :dev, runtime: false},
+      {:mox, "~> 1.0", only: :test},
       {:phoenix_live_reload, "~> 1.3", only: :dev}
     ]
   end

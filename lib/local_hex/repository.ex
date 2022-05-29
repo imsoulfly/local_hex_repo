@@ -10,6 +10,30 @@ defmodule LocalHex.Repository do
   * `registry` - Map of the registry for available packages during runtime. It's also persisted in files using the `LocalHex.Registry.Builder` module
   * `public_key` - Public key to be exposed for api usage
   * `private_key` - Private key to be kept in secret
+  * `options` - Consists of additional configuration options for the mirror repository for example
+
+
+  ## Explanation of options
+
+    * `:upstream_name` - the name of the repository we are mirroring
+    * `:upstream_url` - the url of the repository we are mirroring
+    * `:upstream_public_key` - the public key of the repository we are mirroring
+    * `:sync_opts` - options used for syncing packages and releases concurrently
+       (using `Task.Supervisor.async_stream_nolink/4`). Provided options will be merged with the
+       default `[ordered: false]`.
+    * `:sync_interval` - how often to check mirrored repository for changes in milliseconds.
+    * `:sync_mode` - (`:selective`, `:on_demand`, `:full`)
+    * `:sync_only` - if set and `sync_mode == :selective` is activated, this is an allowed list of packages to mirror. If not set, we mirror all
+       available packages.
+
+       When using `:sync_only` option, you need to manually make sure that all of package's
+       dependencies are included in the allowed list.
+
+       Note, this mirror works by copying `/names` and `versions` resources from upstream.
+       Thus, even though these resources may list a given package, if it's not in the allowed list it won't
+       be stored in the mirror. An alternative mirror implementation could have `/names` and `/versions`
+       resources only contain packages that the mirror actually has, but these resources would have
+       to be signed with mirror's private key.
   """
 
   alias LocalHex.{Documentation, Package, Storage}
@@ -19,20 +43,33 @@ defmodule LocalHex.Repository do
   @manifest_vsn 1
 
   @type t :: %{
-    name: binary,
-    store: {atom, keyword()},
-    registry: map(),
-    public_key: binary,
-    private_key: binary
-  }
+          name: binary,
+          store: {atom, keyword()},
+          registry: map(),
+          public_key: binary,
+          private_key: binary,
+          options: map()
+        }
 
   @derive {Inspect, only: [:name, :public_key, :store, :registry]}
   @enforce_keys [:name, :public_key, :private_key, :store]
   defstruct name: "localhex",
-            store: {LocalHex.Storage.Local, root: {:local_hex, "priv/repos/"}},
+            store: {LocalHex.Storage.Local, root: "priv/repos/"},
             registry: %{},
             public_key: nil,
-            private_key: nil
+            private_key: nil,
+            options: %{}
+
+  def init(nil) do
+    struct!(__MODULE__,
+      name: "nil_repo",
+      store: {LocalHex.Storage.Local, root: "priv/repos/"},
+      public_key: "",
+      private_key: "",
+      options: {},
+      registry: %{}
+    )
+  end
 
   def init(repository_config) do
     struct!(__MODULE__, repository_config)

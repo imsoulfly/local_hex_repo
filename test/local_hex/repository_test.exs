@@ -71,7 +71,7 @@ defmodule LocalHex.RepositoryTest do
 
       assert File.exists?(path(repository, ["versions"]))
       assert File.exists?(path(repository, ["names"]))
-      assert File.exists?(path(repository, ["tarballs", "example_lib-0.1.0.tar"]))
+      assert File.exists?(path(repository, ["tarballs", "example_lib", "example_lib-0.1.0.tar"]))
       assert File.exists?(path(repository, ["packages", "example_lib"]))
     end
 
@@ -86,8 +86,8 @@ defmodule LocalHex.RepositoryTest do
 
       assert {:ok, [_, _]} = Map.fetch(repository.registry, "example_lib")
 
-      assert File.exists?(path(repository, ["tarballs", "example_lib-0.1.0.tar"]))
-      assert File.exists?(path(repository, ["tarballs", "example_lib-0.2.0.tar"]))
+      assert File.exists?(path(repository, ["tarballs", "example_lib", "example_lib-0.1.0.tar"]))
+      assert File.exists?(path(repository, ["tarballs", "example_lib", "example_lib-0.2.0.tar"]))
     end
   end
 
@@ -98,7 +98,7 @@ defmodule LocalHex.RepositoryTest do
       {:ok, tarball} = File.read("./test/fixtures/docs/example_lib-0.1.0.tar")
       :ok = Repository.publish_docs(repository, "example_lib", "0.1.0", tarball)
 
-      assert File.exists?(path(repository, ["docs", "example_lib-0.1.0.tar"]))
+      assert File.exists?(path(repository, ["docs", "example_lib", "example_lib-0.1.0.tar"]))
     end
 
     test "fails on invalid name" do

@@ -1,4 +1,4 @@
-defmodule LocalHex.RepositoryProxy do
+defmodule LocalHex.RepositoryServer do
   @moduledoc """
   This module serves the purpose of streamlining all changes to repos through one central process.
   We are basically making use of how the process mailbox is handled step by stap and that way it prevents

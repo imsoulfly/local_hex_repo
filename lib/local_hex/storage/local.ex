@@ -32,18 +32,18 @@ defmodule LocalHex.Storage.Local do
   @impl true
   def read(repository, path) do
     path = path(repository, path)
-    Logger.debug(inspect({__MODULE__, :read, path}))
 
     case File.read(path) do
       {:ok, contents} ->
-        Logger.debug(inspect({__MODULE__, :read, :successful}))
+        Logger.debug(inspect({__MODULE__, :read, path, :successful}))
         {:ok, contents}
 
       {:error, :enoent} ->
-        Logger.debug(inspect({__MODULE__, :read, :not_found}))
+        Logger.debug(inspect({__MODULE__, :read, path, :not_found}))
         {:error, :not_found}
 
       other ->
+        Logger.debug(inspect({__MODULE__, :read, path, :unknown}))
         other
     end
   end

@@ -11,6 +11,7 @@ This project was inspired by the [MiniRepo](https://github.com/wojtekmach/mini_r
 
 * Hosting your private Elixir libraries (also Erlang libraries)
 * Publishing packages and their documentation
+* Mirroring public Hex.pm libraries
 * Functionial HEX API to provide your private libraries for your apps
 * Various storage adapter for local filesystem or S3
 * Web UI listing all available libraries/version
@@ -21,7 +22,7 @@ This project was inspired by the [MiniRepo](https://github.com/wojtekmach/mini_r
 ## Planned Features
 
 * More storage adapters (AWS.KMS, Swift, ...)
-* Mirroring public Hex libraries
+* Mirroring public Hex libraries incl. their dependency trees
 * Admin UI to configure several things like the mirroring
 * Your suggestions
 
@@ -57,6 +58,64 @@ config :local_hex,
 
 * __public_key__: Public key material for you private key. This is used to validate published packages with the private key. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
 
+
+## Adding setup for a Hex.pm mirror
+
+To configure the mirror ability add the following repository configuration for the `:mirror` to 
+your configuration list of repositories.
+
+```
+config :local_hex,
+  repositories: [
+    ...,
+    mirror: [
+      name: "local_hex_dev_mirror", # Any name you like
+      store: {LocalHex.Storage.Local, root: {:local_hex, "priv/repos/"}},,
+      private_key: File.read!(Path.expand("../test/fixtures/test_private_key.pem", __DIR__)),
+      public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__)),
+      options: %{
+        sync_interval: 60 * 60 * 1000, # every hour
+        sync_opts: [max_concurrency: 5, timeout: 20000],
+        sync_only: ~w(jason, phoenix, ...), # Any library you like
+
+        # Source: https://hex.pm/docs/public_keys
+        upstream_name: "hexpm",
+        upstream_url: "https://repo.hex.pm",
+        upstream_public_key: """
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApqREcFDt5vV21JVe2QNB
+        Edvzk6w36aNFhVGWN5toNJRjRJ6m4hIuG4KaXtDWVLjnvct6MYMfqhC79HAGwyF+
+        IqR6Q6a5bbFSsImgBJwz1oadoVKD6ZNetAuCIK84cjMrEFRkELtEIPNHblCzUkkM
+        3rS9+DPlnfG8hBvGi6tvQIuZmXGCxF/73hU0/MyGhbmEjIKRtG6b0sJYKelRLTPW
+        XgK7s5pESgiwf2YC/2MGDXjAJfpfCd0RpLdvd4eRiXtVlE9qO9bND94E7PgQ/xqZ
+        J1i2xWFndWa6nfFnRxZmCStCOZWYYPlaxr+FZceFbpMwzTNs4g3d4tLNUcbKAIH4
+        0wIDAQAB
+        -----END PUBLIC KEY-----
+        """
+      }
+    ]
+  ]
+```
+
+* __name__: Name of the repository which also is used in the `hex.config` and `deps` configuration
+
+* __store__: Currently it's only possible to choose `LocalHex.Storage.(Local | S3)` to store packages. In case more is need it is pretty easy to write another adapter. Also see the adapter modules for their configuration.
+
+* __private_key__: Private key generated via `ssh` or any other way. This is used to sign packages. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
+
+* __public_key__: Public key material for you private key. This is used to validate published packages with the private key. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
+
+* __sync_interval__: The interval in milliseconds to wait between rechecks if something new has to be mirrored
+
+* __sync_opts__: Currently only timout or concurrency controls for the sync, more documentation and options will follow
+
+* __sync_only__: The selection of dependencies to mirror from upstream 
+
+* __upstream_name__: Default name of Hex.pm, could be changed to some third party package storage
+
+* __upstream_url__: Default url of Hex.pm, could be changed to some third party package storage url
+
+* __upstream_public_key__: Default public key of Hex.pm, could be changed to some third party package storage public key
 
 ## Additional storage adapters
 
@@ -164,8 +223,9 @@ mix hex.publish
 
 ## Use your locally hosted libraries
 
-Be aware that the `Hex` repo needs to added in every local dev environment and especially also in the CI/CD system of your infrastructure.
-It can look like the following but these commands are also accessible in the web frontend of this app as a setup guide.
+Be aware that the `Hex` repo needs to added in every local dev environment and especially also in the CI/CD system of your infrastructure. This is case for both the repository of your own dependencies but also for the the mirror repository in case you have set it up.
+
+It can look like the following but these commands are also accessible in the web frontend of this app as a setup guide. In the example the repository is named `local_hex` in its configuration.
 
 ```
 wget -q https://local_hex.your_company.com/public_key
@@ -183,7 +243,6 @@ defp deps do
   ]
 end
 ```
-
 
 ## Local setup in case you want to adapt or support this project
 
