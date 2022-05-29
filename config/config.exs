@@ -15,7 +15,7 @@ config :local_hex, LocalHexWeb.Endpoint,
   live_view: [signing_salt: "9DO+WBcQ"]
 
 config :esbuild,
-  version: "0.12.18",
+  version: "0.14.42",
   default: [
     args: ~w(js/app.js --bundle --target=es2016 --outdir=../priv/static/assets),
     cd: Path.expand("../assets", __DIR__),
@@ -33,7 +33,7 @@ config :mime, :types, %{
 }
 
 config :dart_sass,
-  version: "1.36.0",
+  version: "1.52.1",
   default: [
     args: ~w(--load-path=../deps/bulma css:../priv/static/assets),
     cd: Path.expand("../assets", __DIR__)

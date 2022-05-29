@@ -8,13 +8,13 @@ config :ex_aws, :s3,
   port: 9000,
   region: "local"
 
-# storage_config = {LocalHex.Storage.Local, root: "priv/repos/"}
-storage_config =
-  {LocalHex.Storage.S3,
-   bucket: "localhex",
-   options: [
-     region: "local"
-   ]}
+storage_config = {LocalHex.Storage.Local, root: "priv/repos/"}
+# storage_config =
+#   {LocalHex.Storage.S3,
+#    bucket: "localhex",
+#    options: [
+#      region: "local"
+#    ]}
 
 config :local_hex,
   auth_token: "local_token",
