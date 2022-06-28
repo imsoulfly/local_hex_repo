@@ -54,15 +54,6 @@ config :local_hex,
     ]
   ]
 
-# Configure your database
-config :local_hex, LocalHex.Repo,
-  username: "root",
-  password: "",
-  database: "local_hex_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
 config :local_hex, LocalHexWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.

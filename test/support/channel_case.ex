@@ -16,7 +16,6 @@ defmodule LocalHexWeb.ChannelCase do
   """
 
   use ExUnit.CaseTemplate
-  alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
@@ -30,8 +29,5 @@ defmodule LocalHexWeb.ChannelCase do
   end
 
   setup tags do
-    pid = Sandbox.start_owner!(LocalHex.Repo, shared: not tags[:async])
-    on_exit(fn -> Sandbox.stop_owner(pid) end)
-    :ok
   end
 end

@@ -2,7 +2,6 @@
 import Config
 
 config :local_hex,
-  ecto_repos: [LocalHex.Repo],
   storage: [
     root_path: "./priv/static/storage"
   ]

@@ -43,7 +43,6 @@ defmodule LocalHex.MixProject do
     [
       {:bulma, "0.9.3"},
       {:dart_sass, "~> 0.5"},
-      {:ecto_sql, "~> 3.7"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_aws, "~> 2.2"},
       {:ex_aws_s3, "~> 2.3"},
@@ -53,9 +52,7 @@ defmodule LocalHex.MixProject do
       {:hex_core, "~> 0.8"},
       {:jason, "~> 1.3"},
       {:logger_file_backend, "~> 0.0.12", only: :test},
-      {:myxql, ">= 0.0.0"},
       {:phoenix, "~> 1.6.0"},
-      {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.2"},
       {:phoenix_live_view, "~> 0.17"},
       {:phoenix_live_dashboard, "~> 0.6"},
@@ -90,9 +87,7 @@ defmodule LocalHex.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      setup: ["deps.get"],
       "assets.deploy": [
         "sass default --no-source-map --style=compressed",
         "esbuild default --minify",
