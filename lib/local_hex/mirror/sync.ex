@@ -101,7 +101,8 @@ defmodule LocalHex.Mirror.Sync do
       mirror =
         update_in(mirror.registry, fn registry ->
           registry
-          |> Map.reject(fn {key, _} -> key in deleted end)
+          |> Enum.reject(fn {key, _} -> key in deleted end)
+          |> Enum.into(%{})
           |> Map.merge(created)
           |> Map.merge(updated)
         end)
