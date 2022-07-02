@@ -1,8 +1,6 @@
 defmodule LocalHexWeb.StorageControllerTest do
   use LocalHexWeb.ConnCase, async: false
 
-  alias LocalHex.{Repository, Storage}
-
   describe "#names" do
     test "loads names of repository", %{conn: conn, repository: repository} do
       value = "test_string"
@@ -54,6 +52,14 @@ defmodule LocalHexWeb.StorageControllerTest do
 
       assert conn.status == 404
     end
+
+    test "with fallback to mirror package when local version not found", %{conn: conn} do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, _} = Repository.publish(repository_mirror_config(), tarball)
+      conn = get(conn, "/packages/example_lib")
+
+      assert conn.status == 200
+    end
   end
 
   describe "#package_tarball" do
@@ -70,6 +76,14 @@ defmodule LocalHexWeb.StorageControllerTest do
       conn = get(conn, "/tarballs/example_lib-0.1.0.tar")
 
       assert conn.status == 404
+    end
+
+    test "with fallback to mirror package when local version not found", %{conn: conn} do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, _} = Repository.publish(repository_mirror_config(), tarball)
+      conn = get(conn, "/tarballs/example_lib-0.1.0.tar")
+
+      assert conn.status == 200
     end
   end
 

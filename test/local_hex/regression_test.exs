@@ -12,7 +12,7 @@ defmodule LocalHex.RegressionTest do
   end
 
   test "via hex_core" do
-    [main: test_repo] = Application.fetch_env!(:local_hex, :repositories)
+    [main: test_repo, mirror: _] = Application.fetch_env!(:local_hex, :repositories)
 
     config = %{
       :hex_core.default_config()

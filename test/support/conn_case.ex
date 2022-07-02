@@ -17,6 +17,8 @@ defmodule LocalHexWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias LocalHex.Repository
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -24,6 +26,8 @@ defmodule LocalHexWeb.ConnCase do
       import Phoenix.ConnTest
       import LocalHexWeb.ConnCase
 
+      alias LocalHex.Repository
+      alias LocalHex.Storage
       alias LocalHexWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
@@ -37,6 +41,9 @@ defmodule LocalHexWeb.ConnCase do
       root_path(repository_config().store)
       |> File.rm_rf()
 
+      root_path(repository_mirror_config().store)
+      |> File.rm_rf()
+
       # Sandbox.stop_owner(pid)
     end)
 
@@ -46,7 +53,13 @@ defmodule LocalHexWeb.ConnCase do
   def repository_config do
     Application.fetch_env!(:local_hex, :repositories)
     |> Keyword.fetch!(:main)
-    |> LocalHex.Repository.init()
+    |> Repository.init()
+  end
+
+  def repository_mirror_config do
+    Application.fetch_env!(:local_hex, :repositories)
+    |> Keyword.fetch!(:mirror)
+    |> Repository.init()
   end
 
   def path(repository, path) do

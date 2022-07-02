@@ -8,6 +8,10 @@ defmodule LocalHex.PackageTest do
     assert package.version == "1.0.1"
   end
 
+  test "#load_from_filename with invalid filename" do
+    {:error, :not_valid} = LocalHex.Package.load_from_filename("example_lib-1.whatever.1.tar")
+  end
+
   test "#load_from_filename with version and pre-release" do
     {:ok, package} =
       LocalHex.Package.load_from_filename("example_lib-1.0.0-alpha.3+20130417140000.amd64.tar")

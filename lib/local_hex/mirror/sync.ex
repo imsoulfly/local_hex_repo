@@ -225,7 +225,6 @@ defmodule LocalHex.Mirror.Sync do
          {:ok, versions} <- decode_hexpm_versions(mirror, signed),
          signed_versions <- encode_versions(mirror, versions),
          :ok <- Storage.write_versions(mirror, signed_versions) do
-      File.write!("versions.json", Jason.encode!(versions))
       {:ok, versions}
     else
       other ->

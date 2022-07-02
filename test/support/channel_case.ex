@@ -27,7 +27,4 @@ defmodule LocalHexWeb.ChannelCase do
       @endpoint LocalHexWeb.Endpoint
     end
   end
-
-  setup tags do
-  end
 end

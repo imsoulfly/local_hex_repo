@@ -174,6 +174,30 @@ defmodule LocalHex.RegistryTest do
       assert ^expected_retired = result.retired
     end
 
+    test "marks a release with unknown cause" do
+      {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
+      {:ok, package} = Package.load_from_tarball(tarball)
+
+      registry =
+        Registry.add_package(%{}, package)
+        |> Registry.retire_package_release(
+          package.name,
+          "0.1.0",
+          "whatever",
+          "some_message"
+        )
+
+      result = registry["example_lib"] |> List.first()
+
+      expected_retired = %{
+        reason: :RETIRED_OTHER,
+        message: "some_message"
+      }
+
+      assert Map.has_key?(result, :retired)
+      assert ^expected_retired = result.retired
+    end
+
     test "updates the retired state of a release" do
       {:ok, tarball} = File.read("./test/fixtures/example_lib-0.1.0.tar")
       {:ok, package} = Package.load_from_tarball(tarball)
@@ -184,6 +208,18 @@ defmodule LocalHex.RegistryTest do
           package.name,
           "0.1.0",
           "invalid",
+          "some_message"
+        )
+        |> Registry.retire_package_release(
+          package.name,
+          "0.1.0",
+          "deprecated",
+          "some_message"
+        )
+        |> Registry.retire_package_release(
+          package.name,
+          "0.1.0",
+          "renamed",
           "some_message"
         )
         |> Registry.retire_package_release(

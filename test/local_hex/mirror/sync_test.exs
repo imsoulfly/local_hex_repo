@@ -96,12 +96,6 @@ defmodule LocalHex.Mirror.SyncTest do
     {:ok, tarball2} = File.read("./test/fixtures/example_lib-0.2.0.tar")
     {:ok, another_tarball} = File.read("./test/fixtures/another_lib-0.1.0.tar")
 
-    {:ok, repository} =
-      Repository.load(repository())
-      |> Repository.publish(another_tarball)
-
-    Repository.save(repository)
-
     MockHexApi
     |> expect(:fetch_hexpm_names, fn _ ->
       names =
@@ -137,6 +131,16 @@ defmodule LocalHex.Mirror.SyncTest do
       _, "example_lib", "0.2.0" -> {:ok, tarball2}
     end)
 
+    {:ok, repository} =
+      Repository.load(repository())
+      |> Repository.publish(another_tarball)
+
+    Repository.save(repository)
+
+    assert Map.has_key?(repository.registry, "another_lib")
+    assert File.exists?(path(repository(), ["packages", "another_lib"]))
+    assert File.exists?(path(repository(), ["tarballs", "another_lib", "another_lib-0.1.0.tar"]))
+
     Sync.sync(repository(), "example_lib")
     repository = Repository.load(repository())
 
@@ -144,5 +148,9 @@ defmodule LocalHex.Mirror.SyncTest do
     assert File.exists?(path(repository(), ["packages", "example_lib"]))
     assert File.exists?(path(repository(), ["tarballs", "example_lib", "example_lib-0.1.0.tar"]))
     assert File.exists?(path(repository(), ["tarballs", "example_lib", "example_lib-0.2.0.tar"]))
+
+    refute Map.has_key?(repository.registry, "another_lib")
+    refute File.exists?(path(repository(), ["packages", "another_lib"]))
+    refute File.exists?(path(repository(), ["tarballs", "another_lib", "another_lib-0.1.0.tar"]))
   end
 end

@@ -60,17 +60,6 @@ defmodule LocalHex.Repository do
             private_key: nil,
             options: %{}
 
-  def init(nil) do
-    struct!(__MODULE__,
-      name: "nil_repo",
-      store: {LocalHex.Storage.Local, root: "priv/repos/"},
-      public_key: "",
-      private_key: "",
-      options: {},
-      registry: %{}
-    )
-  end
-
   def init(repository_config) do
     struct!(__MODULE__, repository_config)
   end
