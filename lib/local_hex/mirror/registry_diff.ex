@@ -53,6 +53,40 @@ defmodule LocalHex.Mirror.RegistryDiff do
     }
   end
 
+  def deps_compare(updated, source) do
+    updated_set = collect_dependencies(updated)
+    source_set = collect_dependencies(source)
+
+    MapSet.difference(updated_set, source_set)
+    |> MapSet.to_list()
+    |> case do
+      [] ->
+        {:ok, :equal}
+
+      difference ->
+        {:ok, difference}
+    end
+  end
+
+  defp collect_dependencies(registry) do
+    Enum.reduce(registry, MapSet.new(), fn {_, releases}, complete_set ->
+      dependencies = collect_dependencies_of_releases(releases)
+
+      MapSet.union(complete_set, dependencies)
+    end)
+  end
+
+  defp collect_dependencies_of_releases(releases) do
+    Enum.reduce(releases, MapSet.new(), fn release, complete_set ->
+      dependencies =
+        Enum.reduce(release.dependencies, MapSet.new(), fn dependency, dep_list ->
+          MapSet.put(dep_list, dependency.package)
+        end)
+
+      MapSet.union(complete_set, dependencies)
+    end)
+  end
+
   defp sort_versions(list) do
     Enum.sort(list, &(Version.compare(&1, &2) == :lt))
   end
