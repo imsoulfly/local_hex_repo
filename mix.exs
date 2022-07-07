@@ -73,9 +73,9 @@ defmodule LocalHex.MixProject do
 
   defp dialyzer do
     [
-      plt_add_deps: [:app_direct],
-      plt_add_apps: [],
-      plt_ignore_apps: []
+      # plt_add_deps: :app_tree,
+      # plt_add_apps: [],
+      # plt_ignore_apps: []
     ]
   end
 
