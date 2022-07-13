@@ -41,8 +41,7 @@ config :dart_sass,
 if Mix.env() == :dev do
   config :mix_test_watch,
     tasks: [
-      # "test --failed",
-      # "test test/local_hex/mirror/sync_test.exs:94",
+      "test --failed",
       "coveralls.html",
       "credo --strict"
     ]

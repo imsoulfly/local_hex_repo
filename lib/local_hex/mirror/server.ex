@@ -20,48 +20,57 @@ defmodule LocalHex.Mirror.Server do
 
   def init(mirror) do
     # Initiate sync loop interval
-    Process.send_after(self(), :sync, 1000)
+    schedule_sync(mirror, 1000)
 
-    {:ok, mirror}
+    {:ok, new_state(mirror)}
   end
 
   def ensure_package(mirror, name) do
     GenServer.call(mirror, {:ensure_package, name}, :infinity)
   end
 
-  def handle_info(:sync, mirror) do
-    mirror = Repository.load(mirror)
+  def handle_info(:sync, state) do
+    mirror = Repository.load(state.mirror)
+    new_state = process_sync(mirror)
 
-    case Sync.sync(mirror) do
+    {:noreply, new_state}
+  end
+
+  def handle_call({:ensure_package, name}, _from, state) do
+    mirror = Repository.load(state.mirror)
+    new_state = process_sync(mirror, [name])
+
+    {:reply, :ok, new_state}
+  end
+
+  def handle_call(_msg, _from, state) do
+    {:reply, :ok, state}
+  end
+
+  defp process_sync(mirror, names \\ []) do
+    case Sync.sync(mirror, names) do
       {:ok, %Repository{} = new_mirror} ->
         schedule_sync(new_mirror)
-        {:noreply, new_mirror}
+        new_state(new_mirror)
+
+      {:new_deps, dep_list, %Repository{} = new_mirror} ->
+        schedule_sync(new_mirror, 1_000)
+        new_state(new_mirror, dep_list)
 
       _ ->
         schedule_sync(mirror)
-        {:noreply, mirror}
+        new_state(mirror)
     end
   end
 
-  def handle_call({:ensure_package, name}, _from, mirror) do
-    mirror = Repository.load(mirror)
-
-    case Sync.sync(mirror, name) do
-      {:ok, %Repository{} = new_mirror} ->
-        schedule_sync(new_mirror)
-        {:reply, :ok, new_mirror}
-
-      _ ->
-        schedule_sync(mirror)
-        {:reply, :ok, mirror}
-    end
+  defp new_state(mirror, deps \\ []) do
+    %{
+      mirror: mirror,
+      deps: deps
+    }
   end
 
-  def handle_call(_msg, _from, mirror) do
-    {:reply, :ok, mirror}
-  end
-
-  defp schedule_sync(mirror) do
-    Process.send_after(self(), :sync, mirror.options.sync_interval)
+  defp schedule_sync(mirror, interval \\ nil) do
+    Process.send_after(self(), :sync, interval || mirror.options.sync_interval)
   end
 end

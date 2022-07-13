@@ -87,10 +87,10 @@ defmodule LocalHex.Mirror.Sync do
 
   @default_sync_opts [ordered: false]
 
-  def sync(mirror, new_package_name \\ nil) do
+  def sync(mirror, new_packages \\ []) do
     with {:ok, names} when is_list(names) <- sync_names(mirror),
          {:ok, versions} when is_list(versions) <- sync_versions(mirror) do
-      versions = filter_allowed_packages(mirror, versions, new_package_name)
+      versions = filter_allowed_packages(mirror, versions, new_packages)
       difference = RegistryDiff.compare(mirror.registry, versions)
 
       Logger.debug([inspect(__MODULE__), " difference: ", inspect(difference, pretty: true)])
@@ -98,27 +98,33 @@ defmodule LocalHex.Mirror.Sync do
       deleted = sync_deleted_packages(mirror, difference)
       updated = sync_releases(mirror, difference)
 
-      mirror =
-        update_in(mirror.registry, fn registry ->
-          registry
-          |> Enum.reject(fn {key, _} -> key in deleted end)
-          |> Enum.into(%{})
-          |> Map.merge(created)
-          |> Map.merge(updated)
-        end)
+      updated_registry =
+        mirror.registry
+        |> Enum.reject(fn {key, _} -> key in deleted end)
+        |> Enum.into(%{})
+        |> Map.merge(created)
+        |> Map.merge(updated)
 
-      Repository.save(mirror)
-      {:ok, mirror}
+      new_mirror = Map.put(mirror, :registry, updated_registry)
+      Repository.save(new_mirror)
+
+      case RegistryDiff.deps_compare(updated_registry, mirror.registry) do
+        {:ok, :equal} ->
+          {:ok, mirror}
+
+        {:ok, new_deps} ->
+          {:new_deps, new_deps, mirror}
+      end
     end
   end
 
-  defp filter_allowed_packages(mirror, versions, new_package_name) do
+  defp filter_allowed_packages(mirror, versions, new_packages) do
     packages_in_registry = Map.keys(mirror.registry)
 
     for %{name: name} = map <- versions,
         name in packages_in_registry or
           name in mirror.options[:sync_only] or
-          name == new_package_name,
+          name in new_packages,
         into: %{},
         do: {name, Map.delete(map, :version)}
   end
