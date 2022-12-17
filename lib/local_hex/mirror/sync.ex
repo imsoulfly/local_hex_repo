@@ -140,12 +140,12 @@ defmodule LocalHex.Mirror.Sync do
         fn name ->
           Logger.debug("#{inspect(__MODULE__)} syncing #{name}")
 
-          {:ok, releases} = sync_package(mirror, name)
+          {:ok, package} = sync_package(mirror, name)
 
           stream =
             Task.Supervisor.async_stream_nolink(
               LocalHex.TaskSupervisor,
-              releases,
+              package.releases,
               fn release ->
                 :ok = sync_tarball(mirror, name, release.version)
                 release
@@ -215,7 +215,7 @@ defmodule LocalHex.Mirror.Sync do
 
   defp sync_names(mirror) do
     with {:ok, signed} <- HexApi.fetch_hexpm_names(mirror),
-         {:ok, names} <- decode_hexpm_names(mirror, signed),
+         {:ok, %{packages: names}} <- decode_hexpm_names(mirror, signed),
          signed_names <- encode_names(mirror, names),
          :ok <- Storage.write_names(mirror, signed_names) do
       {:ok, names}
@@ -228,7 +228,7 @@ defmodule LocalHex.Mirror.Sync do
 
   defp sync_versions(mirror) do
     with {:ok, signed} <- HexApi.fetch_hexpm_versions(mirror),
-         {:ok, versions} <- decode_hexpm_versions(mirror, signed),
+         {:ok, %{packages: versions}} <- decode_hexpm_versions(mirror, signed),
          signed_versions <- encode_versions(mirror, versions),
          :ok <- Storage.write_versions(mirror, signed_versions) do
       {:ok, versions}
@@ -289,7 +289,7 @@ defmodule LocalHex.Mirror.Sync do
       :hex_registry.encode_package(%{
         repository: repository.name,
         name: name,
-        releases: package
+        releases: package.releases
       })
 
     sign_and_gzip(repository, protobuf)
