@@ -4,6 +4,7 @@ defmodule LocalHexWeb.PackageController do
   alias LocalHex.{Registry, Repository}
 
   def index(conn, _params) do
+
     render(
       conn,
       "index.html",

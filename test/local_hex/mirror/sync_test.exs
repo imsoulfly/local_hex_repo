@@ -7,7 +7,7 @@ defmodule LocalHex.Mirror.SyncTest do
 
   test "sync with empty list of libraries from API initializes repository" do
     MockHexApi
-    |> expect(:fetch_hexpm_names, fn _ -> {:ok, upstream_encode_names([])} end)
+    |> expect(:fetch_hexpm_names, 1, fn _ -> {:ok, upstream_encode_names([])} end)
     |> expect(:fetch_hexpm_versions, 1, fn _ -> {:ok, upstream_encode_versions([])} end)
     |> expect(:fetch_hexpm_package, 0, fn _, _ -> {:ok, "signed_package"} end)
     |> expect(:fetch_hexpm_tarball, 0, fn _, _, _ -> {200, "tarball"} end)
@@ -25,7 +25,7 @@ defmodule LocalHex.Mirror.SyncTest do
     initial_repository_setup()
 
     MockHexApi
-    |> expect(:fetch_hexpm_names, fn _ -> {:ok, upstream_encode_names([])} end)
+    |> expect(:fetch_hexpm_names, 1, fn _ -> {:ok, upstream_encode_names([])} end)
     |> expect(:fetch_hexpm_versions, 1, fn _ -> {:ok, upstream_encode_versions([])} end)
     |> expect(:fetch_hexpm_package, 0, fn _, _ -> {:ok, "signed_package"} end)
     |> expect(:fetch_hexpm_tarball, 0, fn _, _, _ -> {200, "tarball"} end)
