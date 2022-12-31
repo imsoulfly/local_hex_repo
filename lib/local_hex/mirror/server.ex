@@ -31,7 +31,7 @@ defmodule LocalHex.Mirror.Server do
 
   def handle_info(:sync, state) do
     mirror = Repository.load(state.mirror)
-    new_state = process_sync(mirror)
+    new_state = process_sync(mirror, state.deps)
 
     {:noreply, new_state}
   end
@@ -47,7 +47,7 @@ defmodule LocalHex.Mirror.Server do
     {:reply, :ok, state}
   end
 
-  defp process_sync(mirror, names \\ []) do
+  defp process_sync(mirror, names) do
     case Sync.sync(mirror, names) do
       {:ok, %Repository{} = new_mirror} ->
         schedule_sync(new_mirror)

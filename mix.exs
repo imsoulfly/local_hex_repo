@@ -41,7 +41,7 @@ defmodule LocalHex.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bulma, "0.9.3"},
+      {:bulma, "0.9.4"},
       {:dart_sass, "~> 0.5"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_aws, "~> 2.2"},
@@ -63,7 +63,7 @@ defmodule LocalHex.MixProject do
 
       # dev libraries
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.2", only: [:dev], runtime: false},
       {:excoveralls, "~> 0.14", only: :test},
       {:mix_test_watch, "~> 1.1", only: :dev, runtime: false},
       {:mox, "~> 1.0", only: :test},
