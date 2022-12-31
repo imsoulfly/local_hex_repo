@@ -110,9 +110,11 @@ defmodule LocalHex.Mirror.Sync do
 
       case RegistryDiff.deps_compare(updated_registry, mirror.registry) do
         {:ok, :equal} ->
+          Logger.debug([inspect(__MODULE__), " sync done: nothing else to do"])
           {:ok, mirror}
 
         {:ok, new_deps} ->
+          Logger.debug([inspect(__MODULE__), " sync done with new deps: ", inspect(new_deps)])
           {:new_deps, new_deps, mirror}
       end
     end

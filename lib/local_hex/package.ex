@@ -1,5 +1,6 @@
 defmodule LocalHex.Package do
   @moduledoc false
+  require Logger
 
   defstruct [:name, :version, :release, :tarball]
 
@@ -25,7 +26,7 @@ defmodule LocalHex.Package do
          :ok <- validate_name(result.metadata),
          :ok <- validate_version(result.metadata) do
       package = %__MODULE__{
-        name: result.metadata["name"],
+        name: result.metadata["name"] || result.metadata["app"],
         version: result.metadata["version"],
         release: build_release(result),
         tarball: tarball
@@ -44,7 +45,7 @@ defmodule LocalHex.Package do
     }
   end
 
-  defp build_dependencies(metadata) do
+  defp build_dependencies(%{"requirements" => %{}} = metadata) do
     for {package, map} <- Map.fetch!(metadata, "requirements") do
       %{
         package: package,
@@ -56,11 +57,16 @@ defmodule LocalHex.Package do
     end
   end
 
+  defp build_dependencies(metadata) do
+    Logger.warn([inspect(__MODULE__), " loading package ", metadata["name"] || metadata["app"], " with missing requirements field"])
+    []
+  end
+
   defp maybe_put(map, _key, nil), do: map
   defp maybe_put(map, key, value), do: Map.put(map, key, value)
 
   defp validate_name(metadata) do
-    if metadata["name"] =~ ~r/^[a-z]\w*$/ do
+    if metadata["name"] || metadata["app"] =~ ~r/^[a-z]\w*$/ do
       :ok
     else
       {:error, :invalid_name}
