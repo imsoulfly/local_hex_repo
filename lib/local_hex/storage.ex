@@ -126,7 +126,7 @@ defmodule LocalHex.Storage do
   end
 
   defp extract_name_from_tar_filename(tarball) do
-    regex = ~r/\A(?<package_name>[a-zA-Z_-]*)-\d\.\d\.\d\.tar\z/
+    regex = ~r/\A(?<package_name>[a-zA-Z_-]*)-\d+\.\d+\.\d+\.tar\z/
 
     case Regex.named_captures(regex, tarball) do
       %{"package_name" => package_name} ->

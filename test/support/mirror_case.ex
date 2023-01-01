@@ -30,7 +30,7 @@ defmodule LocalHex.MirrorCase do
   end
 
   def repository(sync_only \\ []) do
-    Repository.init([
+    Repository.init(
       name: "local_hex_test_mirror",
       store: {LocalHex.Storage.Local, root: "priv/repos/"},
       private_key: File.read!(Path.expand("../../test/fixtures/test_private_key.pem", __DIR__)),
@@ -45,9 +45,10 @@ defmodule LocalHex.MirrorCase do
         upstream_name: "hexpm",
         upstream_url: "https://repo.hex.pm",
         # Let's simulate this with the same private key for now
-        upstream_public_key: File.read!(Path.expand("../../test/fixtures/test_public_key.pem", __DIR__))
+        upstream_public_key:
+          File.read!(Path.expand("../../test/fixtures/test_public_key.pem", __DIR__))
       }
-    ])
+    )
     |> Repository.load()
     |> Repository.save()
     |> Repository.load()
@@ -83,26 +84,31 @@ defmodule LocalHex.MirrorCase do
     :hex_registry.encode_package(%{
       repository: repository().options.upstream_name,
       name: name,
-      releases: for p <- packages do p.release end
+      releases:
+        for p <- packages do
+          p.release
+        end
     })
     |> :hex_registry.sign_protobuf(repository().private_key)
     |> :zlib.gzip()
   end
 
   def initial_repository_setup do
-    names = [
-      %{name: "example_lib", updated_at: %{nanos: 820_498_000, seconds: 1_642_619_042}},
-    ]
-    |> upstream_encode_names()
+    names =
+      [
+        %{name: "example_lib", updated_at: %{nanos: 820_498_000, seconds: 1_642_619_042}}
+      ]
+      |> upstream_encode_names()
 
-    versions = [
-      %{
-         name: "example_lib",
-         retired: [],
-         versions: ["0.1.0", "0.2.0"]
-      }
-    ]
-    |> upstream_encode_versions()
+    versions =
+      [
+        %{
+          name: "example_lib",
+          retired: [],
+          versions: ["0.1.0", "0.2.0"]
+        }
+      ]
+      |> upstream_encode_versions()
 
     {:ok, tarball1} = File.read("./test/fixtures/example_lib-0.1.0.tar")
     {:ok, tarball2} = File.read("./test/fixtures/example_lib-0.2.0.tar")
@@ -113,6 +119,7 @@ defmodule LocalHex.MirrorCase do
     package = upstream_encode_package("example_lib", [package1, package2])
 
     repository = Repository.load(repository())
+
     registry =
       repository.registry
       |> Registry.add_package(package1)
