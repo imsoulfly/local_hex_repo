@@ -5,19 +5,19 @@
       <p>For local development add the repo using mix:</p>
 
       <div class="pre">
-        $ wget -q <%= Routes.url(@conn) %>/<%= @repo.name %>_public.pem
+        wget -q <%= Routes.url(@conn) %>/<%= @repo.name %>_public.pem
         <br />
-        $ mix hex.repo add <%= @repo.name %> <%= Routes.url(@conn) %> --public-key
+        mix hex.repo add <%= @repo.name %> <%= Routes.url(@conn) %> --public-key
         <%= @repo.name %>_public.pem
         <br />
-        $ rm -f <%= @repo.name %>_public.pem
+        rm -f <%= @repo.name %>_public.pem
       </div>
 
       <p>To verify that mix is aware of the new repository:</p>
 
       <div class="pre">
         <p>
-          $ mix hex.repo list
+          mix hex.repo list
         </p>
         <table>
           <thead>
