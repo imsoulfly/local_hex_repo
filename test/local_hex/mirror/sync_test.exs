@@ -233,6 +233,9 @@ defmodule LocalHex.Mirror.SyncTest do
 
     {:ok, _} = Sync.sync(repository(), dep_list)
 
+    # sleep to cover the timeframe of syncing the deps
+    Process.sleep(500)
+
     repository = Repository.load(repository())
 
     assert Map.has_key?(repository.registry, "example_lib")
