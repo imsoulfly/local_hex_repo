@@ -12,6 +12,7 @@ defmodule LocalHex.Mirror.HexPm do
     Logger.debug("#{inspect(__MODULE__)} fetching names")
 
     config = hex_config(repository)
+
     case :hex_http.request(config, :get, config.repo_url <> "/names", %{}, :undefined) do
       {:ok, {200, _, signed}} -> {:ok, signed}
       error -> error
@@ -22,6 +23,7 @@ defmodule LocalHex.Mirror.HexPm do
     Logger.debug("#{inspect(__MODULE__)} fetching versions")
 
     config = hex_config(repository)
+
     case :hex_http.request(config, :get, config.repo_url <> "/versions", %{}, :undefined) do
       {:ok, {200, _, signed}} -> {:ok, signed}
       error -> error
@@ -32,6 +34,7 @@ defmodule LocalHex.Mirror.HexPm do
     Logger.debug("#{inspect(__MODULE__)} fetching package #{name}")
 
     config = hex_config(repository)
+
     case :hex_http.request(config, :get, config.repo_url <> "/packages/" <> name, %{}, :undefined) do
       {:ok, {200, _, signed}} -> {:ok, signed}
       error -> error
@@ -42,6 +45,7 @@ defmodule LocalHex.Mirror.HexPm do
     Logger.debug("#{inspect(__MODULE__)} fetching tarball #{name}-#{version}.tar")
 
     config = hex_config(repository)
+
     case :hex_repo.get_tarball(config, name, version) do
       {:ok, {200, _, tarball}} -> {:ok, tarball}
       error -> error

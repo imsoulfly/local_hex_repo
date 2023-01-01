@@ -201,10 +201,12 @@ defmodule LocalHex.Mirror.SyncTest do
         {:ok, package} = Package.load_from_tarball(example_tarball)
 
         {:ok, upstream_encode_package("example_lib", [package])}
+
       _, "another_lib" ->
         {:ok, package} = Package.load_from_tarball(another_tarball)
 
         {:ok, upstream_encode_package("another_lib", [package])}
+
       _, "dep_lib" ->
         {:ok, package} = Package.load_from_tarball(dep_tarball)
 

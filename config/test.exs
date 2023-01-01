@@ -29,13 +29,15 @@ config :local_hex,
         # sync_interval: 5 * 60 * 1000,
         sync_interval: 100 * 1000,
         sync_opts: [max_concurrency: 5, timeout: 20_000],
+        sync_on_demand: false,
         sync_only: [],
 
         # Source: https://hex.pm/docs/public_keys
         upstream_name: "hexpm",
         upstream_url: "https://repo.hex.pm",
         # Let's simulate this with the same private key for now
-        upstream_public_key: File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
+        upstream_public_key:
+          File.read!(Path.expand("../test/fixtures/test_public_key.pem", __DIR__))
       }
     ]
   ]

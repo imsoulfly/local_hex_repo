@@ -61,8 +61,7 @@ config :local_hex,
 
 ## Adding setup for a Hex.pm mirror
 
-To configure the mirror ability add the following repository configuration for the `:mirror` to 
-your configuration list of repositories.
+To configure the mirror ability add the following repository configuration for the `:mirror` to your configuration list of repositories.
 
 ```
 config :local_hex,
@@ -76,6 +75,7 @@ config :local_hex,
       options: %{
         sync_interval: 60 * 60 * 1000, # every hour
         sync_opts: [max_concurrency: 5, timeout: 20000],
+        sync_on_demand: true,
         sync_only: ~w(jason, phoenix, ...), # Any library you like
 
         # Source: https://hex.pm/docs/public_keys
@@ -109,7 +109,9 @@ config :local_hex,
 
 * __sync_opts__: Currently only timout or concurrency controls for the sync, more documentation and options will follow
 
-* __sync_only__: The selection of dependencies to mirror from upstream 
+* __sync_on_demand__: Dependencies when requested but missing will be tried to synced from upstream
+
+* __sync_only__: The selection of dependencies to mirror from upstream
 
 * __upstream_name__: Default name of Hex.pm, could be changed to some third party package storage
 

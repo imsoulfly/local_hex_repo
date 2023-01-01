@@ -1,6 +1,7 @@
 defmodule LocalHexWeb.StorageController do
   use LocalHexWeb, :controller
 
+  alias LocalHex.Mirror.Server
   alias LocalHex.{Repository, Storage}
 
   def names(conn, _params) do
@@ -33,6 +34,8 @@ defmodule LocalHexWeb.StorageController do
         |> send_resp(200, contents)
 
       {:error, _} ->
+        Server.ensure_package(params["name"])
+
         case Storage.read_package(repository_mirror_config(), params["name"]) do
           {:ok, contents} ->
             conn

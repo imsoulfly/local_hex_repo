@@ -34,6 +34,7 @@ config :local_hex,
         # sync_interval: 5 * 60 * 1000,
         sync_interval: 100 * 1000,
         sync_opts: [max_concurrency: 5, timeout: 60000],
+        sync_on_demand: true,
         sync_only: ~w(jason),
 
         # Source: https://hex.pm/docs/public_keys

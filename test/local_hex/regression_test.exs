@@ -55,7 +55,10 @@ defmodule LocalHex.RegressionTest do
 
     {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
 
-    assert packages == %{packages: [%{name: "foo", retired: [], versions: ["1.0.0"]}], repository: "test"}
+    assert packages == %{
+             packages: [%{name: "foo", retired: [], versions: ["1.0.0"]}],
+             repository: "test"
+           }
 
     {:ok, {200, _, %{releases: [release]}}} = :hex_repo.get_package(config, "foo")
     assert release.outer_checksum == outer_checksum
@@ -69,13 +72,21 @@ defmodule LocalHex.RegressionTest do
       })
 
     {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
-    assert packages == %{packages: [%{name: "foo", retired: [0], versions: ["1.0.0"]}], repository: "test"}
+
+    assert packages == %{
+             packages: [%{name: "foo", retired: [0], versions: ["1.0.0"]}],
+             repository: "test"
+           }
 
     {:ok, {200, _, %{releases: [release]}}} = :hex_repo.get_package(config, "foo")
     assert release.retired == %{message: "CVE-2019-0000", reason: :RETIRED_SECURITY}
 
     {:ok, {201, _, _}} = :hex_api_release.unretire(config, "foo", "1.0.0")
     {:ok, {200, _, packages}} = :hex_repo.get_versions(config)
-    assert packages == %{packages: [%{name: "foo", retired: [], versions: ["1.0.0"]}], repository: "test"}
+
+    assert packages == %{
+             packages: [%{name: "foo", retired: [], versions: ["1.0.0"]}],
+             repository: "test"
+           }
   end
 end

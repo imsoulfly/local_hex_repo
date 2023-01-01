@@ -58,7 +58,13 @@ defmodule LocalHex.Package do
   end
 
   defp build_dependencies(metadata) do
-    Logger.warn([inspect(__MODULE__), " loading package ", metadata["name"] || metadata["app"], " with missing requirements field"])
+    Logger.warn([
+      inspect(__MODULE__),
+      " loading package ",
+      metadata["name"] || metadata["app"],
+      " with missing requirements field"
+    ])
+
     []
   end
 

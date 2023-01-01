@@ -25,8 +25,8 @@ defmodule LocalHex.Mirror.Server do
     {:ok, new_state(mirror)}
   end
 
-  def ensure_package(mirror, name) do
-    GenServer.call(mirror, {:ensure_package, name}, :infinity)
+  def ensure_package(name) do
+    GenServer.call(__MODULE__, {:ensure_package, name}, :infinity)
   end
 
   def handle_info(:sync, state) do
@@ -38,7 +38,15 @@ defmodule LocalHex.Mirror.Server do
 
   def handle_call({:ensure_package, name}, _from, state) do
     mirror = Repository.load(state.mirror)
-    new_state = process_sync(mirror, [name])
+
+    new_state =
+      case mirror.options.sync_on_demand do
+        true ->
+          process_sync(mirror, [name])
+
+        _ ->
+          state
+      end
 
     {:reply, :ok, new_state}
   end
