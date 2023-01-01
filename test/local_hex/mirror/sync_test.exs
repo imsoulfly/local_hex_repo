@@ -234,7 +234,7 @@ defmodule LocalHex.Mirror.SyncTest do
     {:ok, _} = Sync.sync(repository(), dep_list)
 
     # sleep to cover the timeframe of syncing the deps
-    Process.sleep(500)
+    Process.sleep(1000)
 
     repository = Repository.load(repository())
 
