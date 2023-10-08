@@ -144,18 +144,12 @@ defmodule LocalHex.Mirror.Sync do
 
           {:ok, package} = sync_package(mirror, name)
 
-          stream =
-            Task.Supervisor.async_stream_nolink(
-              LocalHex.TaskSupervisor,
-              package.releases,
-              fn release ->
-                :ok = sync_tarball(mirror, name, release.version)
-                release
-              end,
-              mirror_sync_opts
-            )
+          releases =
+            for release <- package.releases do
+              :ok = sync_tarball(mirror, name, release.version)
+              release
+            end
 
-          releases = for {:ok, release} <- stream, do: release
           {name, releases}
         end,
         mirror_sync_opts
@@ -216,6 +210,8 @@ defmodule LocalHex.Mirror.Sync do
   end
 
   defp sync_names(mirror) do
+    Logger.debug("#{inspect(__MODULE__)} sync_names")
+
     with {:ok, signed} <- HexApi.fetch_hexpm_names(mirror),
          {:ok, %{packages: names}} <- decode_hexpm_names(mirror, signed),
          signed_names <- encode_names(mirror, names),
@@ -223,12 +219,14 @@ defmodule LocalHex.Mirror.Sync do
       {:ok, names}
     else
       other ->
-        Logger.warn("#{inspect(__MODULE__)} sync_names failed: #{inspect(other)}")
+        Logger.error("#{inspect(__MODULE__)} sync_names failed: #{inspect(other)}")
         other
     end
   end
 
   defp sync_versions(mirror) do
+    Logger.debug("#{inspect(__MODULE__)} sync_versions")
+
     with {:ok, signed} <- HexApi.fetch_hexpm_versions(mirror),
          {:ok, %{packages: versions}} <- decode_hexpm_versions(mirror, signed),
          signed_versions <- encode_versions(mirror, versions),
@@ -236,12 +234,14 @@ defmodule LocalHex.Mirror.Sync do
       {:ok, versions}
     else
       other ->
-        Logger.warn("#{inspect(__MODULE__)} sync_versions failed: #{inspect(other)}")
+        Logger.error("#{inspect(__MODULE__)} sync_versions failed: #{inspect(other)}")
         other
     end
   end
 
   defp sync_package(mirror, name) do
+    Logger.debug("#{inspect(__MODULE__)} sync_package")
+
     with {:ok, signed} <- HexApi.fetch_hexpm_package(mirror, name),
          {:ok, package} <- decode_hexpm_package(mirror, signed, name),
          signed_package <- encode_package(mirror, name, package),
@@ -249,24 +249,28 @@ defmodule LocalHex.Mirror.Sync do
       {:ok, package}
     else
       other ->
-        Logger.warn("#{inspect(__MODULE__)} sync_package failed: #{inspect(other)}")
+        Logger.error("#{inspect(__MODULE__)} sync_package failed: #{inspect(other)}")
         other
     end
   end
 
   defp sync_tarball(mirror, name, version) do
+    Logger.debug("#{inspect(__MODULE__)} sync_tarball")
+
     with {:ok, tarball} <- HexApi.fetch_hexpm_tarball(mirror, name, version),
          {:ok, package} <- Package.load_from_tarball(tarball),
          :ok <- Storage.write_package_tarball(mirror, package) do
       :ok
     else
       other ->
-        Logger.warn("#{inspect(__MODULE__)} sync_tarball failed: #{inspect(other)}")
+        Logger.error("#{inspect(__MODULE__)} sync_tarball failed: #{inspect(other)}")
         other
     end
   end
 
   defp encode_names(repository, names) do
+    Logger.debug("#{inspect(__MODULE__)} encode_names")
+
     protobuf =
       :hex_registry.encode_names(%{
         repository: repository.name,
@@ -277,6 +281,8 @@ defmodule LocalHex.Mirror.Sync do
   end
 
   defp encode_versions(repository, versions) do
+    Logger.debug("#{inspect(__MODULE__)} encode_versions")
+
     protobuf =
       :hex_registry.encode_versions(%{
         repository: repository.name,
@@ -287,6 +293,8 @@ defmodule LocalHex.Mirror.Sync do
   end
 
   defp encode_package(repository, name, package) do
+    Logger.debug("#{inspect(__MODULE__)} encode_package")
+
     protobuf =
       :hex_registry.encode_package(%{
         repository: repository.name,
@@ -298,27 +306,34 @@ defmodule LocalHex.Mirror.Sync do
   end
 
   defp sign_and_gzip(repository, protobuf) do
+    Logger.debug("#{inspect(__MODULE__)} sign_and_gzip")
+
     protobuf
     |> :hex_registry.sign_protobuf(repository.private_key)
     |> :zlib.gzip()
   end
 
   defp decode_hexpm_names(repository, body) do
+    Logger.debug("#{inspect(__MODULE__)} decode_hexpm_names")
     {:ok, payload} = decode_and_verify_signed(body, repository)
     :hex_registry.decode_names(payload, repository.options.upstream_name)
   end
 
   defp decode_hexpm_versions(repository, body) do
+    Logger.debug("#{inspect(__MODULE__)} decode_hexpm_versions")
     {:ok, payload} = decode_and_verify_signed(body, repository)
     :hex_registry.decode_versions(payload, repository.options.upstream_name)
   end
 
   defp decode_hexpm_package(repository, body, name) do
+    Logger.debug("#{inspect(__MODULE__)} decode_hexpm_package")
     {:ok, payload} = decode_and_verify_signed(body, repository)
     :hex_registry.decode_package(payload, repository.options.upstream_name, name)
   end
 
   defp decode_and_verify_signed(body, repository) do
+    Logger.debug("#{inspect(__MODULE__)} decode_and_verify_signed")
+
     body
     |> :zlib.gunzip()
     |> :hex_registry.decode_and_verify_signed(repository.options.upstream_public_key)

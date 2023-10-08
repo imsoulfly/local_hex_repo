@@ -58,7 +58,7 @@ defmodule LocalHex.Package do
   end
 
   defp build_dependencies(metadata) do
-    Logger.warn([
+    Logger.error([
       inspect(__MODULE__),
       " loading package ",
       metadata["name"] || metadata["app"],

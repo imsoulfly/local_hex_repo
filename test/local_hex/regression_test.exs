@@ -38,7 +38,7 @@ defmodule LocalHex.RegressionTest do
     {:ok, {400, _, _}} = :hex_api_release.publish(config, "bad")
 
     metadata = %{"name" => "foo", "version" => "1.0.0", "requirements" => []}
-    files = [{'lib/foo.ex', "defmodule Foo do; end"}]
+    files = [{~c"lib/foo.ex", "defmodule Foo do; end"}]
 
     {:ok, %{tarball: tarball, outer_checksum: outer_checksum}} =
       :hex_tarball.create(metadata, files)
