@@ -1,9 +1,9 @@
 <section class="section">
-  <%= render LocalHexWeb.PackageView, "_package.html",
-    package: @package,
-    conn: @conn,
-    repo: @repo
-  %>
+  <._package
+    package={@package}
+    repo={@repo}
+    conn={@conn}
+  />
 </section>
 
 <section class="section has-text-right">

@@ -9,12 +9,15 @@ config :local_hex,
 config :local_hex, LocalHexWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "RTqooXhIxmqE72o+hTZLTNgwDlWtEkgV08UPotLOvnjL81F6NPfbdnz3k7ysnTV0",
-  render_errors: [view: LocalHexWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: LocalHexWeb.ErrorHTML, json: LocalHexWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: LocalHex.PubSub,
   live_view: [signing_salt: "9DO+WBcQ"]
 
 config :esbuild,
-  version: "0.14.42",
+  version: "0.17.11",
   default: [
     args: ~w(js/app.js --bundle --target=es2016 --outdir=../priv/static/assets),
     cd: Path.expand("../assets", __DIR__),
@@ -32,7 +35,7 @@ config :mime, :types, %{
 }
 
 config :dart_sass,
-  version: "1.52.1",
+  version: "1.61.0",
   default: [
     args: ~w(--load-path=../deps/bulma css:../priv/static/assets),
     cd: Path.expand("../assets", __DIR__)

@@ -12,10 +12,10 @@ defmodule LocalHexWeb.API.PackageControllerTest do
         |> post("/api/publish", tarball)
 
       assert conn.status == 200
-      assert File.exists?(path(repository, ["versions"]))
-      assert File.exists?(path(repository, ["names"]))
-      assert File.exists?(path(repository, ["tarballs", "example_lib", "example_lib-0.1.0.tar"]))
-      assert File.exists?(path(repository, ["packages", "example_lib"]))
+      assert File.exists?(file_path(repository, ["versions"]))
+      assert File.exists?(file_path(repository, ["names"]))
+      assert File.exists?(file_path(repository, ["tarballs", "example_lib", "example_lib-0.1.0.tar"]))
+      assert File.exists?(file_path(repository, ["packages", "example_lib"]))
     end
 
     test "with wrong auth-token return unauthorized", %{conn: conn} do
@@ -52,7 +52,7 @@ defmodule LocalHexWeb.API.PackageControllerTest do
         |> post("/api/packages/example_lib/releases/0.1.0/docs", tarball)
 
       assert conn.status == 201
-      assert File.exists?(path(repository, ["docs", "example_lib", "example_lib-0.1.0.tar"]))
+      assert File.exists?(file_path(repository, ["docs", "example_lib", "example_lib-0.1.0.tar"]))
     end
 
     test "with wrong name returns bad request", %{conn: conn} do

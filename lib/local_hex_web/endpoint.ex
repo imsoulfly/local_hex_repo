@@ -20,7 +20,7 @@ defmodule LocalHexWeb.Endpoint do
     at: "/",
     from: :local_hex,
     gzip: false,
-    only: ~w(docs assets fonts images favicon.ico robots.txt)
+    only: LocalHexWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

@@ -1,10 +1,10 @@
 <section class="section">
   <h2 class="is-size-4"><%= @title %></h2>
   <%= for package <- @packages do %>
-    <%= render LocalHexWeb.PackageView, "_package.html",
-      package: package,
-      conn: @conn,
-      repo: @repo
-    %>
+    <._package
+      package={package}
+      repo={@repo}
+      conn={@conn}
+    />
   <% end %>
 </section>

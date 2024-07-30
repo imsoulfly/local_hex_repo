@@ -1,5 +1,7 @@
-defmodule LocalHexWeb.PackageView do
-  use LocalHexWeb, :view
+defmodule LocalHexWeb.PackageHTML do
+  use LocalHexWeb, :html
+
+  embed_templates "package_html/*"
 
   def package_dom_id(package, version) do
     package.name <> "-" <> String.replace(version, ".", "_")

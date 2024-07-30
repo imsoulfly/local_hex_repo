@@ -24,15 +24,14 @@
       </div>
     </nav>
     <main role="main" class="container">
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+      <.flash_group flash={@flash} />
       <%= @inner_content %>
     </main>
 
-    <%= render LocalHexWeb.PackageView, "_sidebar.html",
-      conn: @conn,
-      repo: @repo
-    %>
+    <._sidebar
+      repo={@repo}
+      conn={@conn}
+    />
 
   </body>
 </html>
