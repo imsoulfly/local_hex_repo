@@ -21,6 +21,10 @@ defmodule LocalHexWeb.ConnCase do
 
   using do
     quote do
+      @endpoint LocalHexWeb.Endpoint
+
+      use LocalHexWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
@@ -28,10 +32,6 @@ defmodule LocalHexWeb.ConnCase do
 
       alias LocalHex.Repository
       alias LocalHex.Storage
-      alias LocalHexWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint LocalHexWeb.Endpoint
     end
   end
 
@@ -62,7 +62,7 @@ defmodule LocalHexWeb.ConnCase do
     |> Repository.init()
   end
 
-  def path(repository, path) do
+  def file_path(repository, path) do
     Path.join([root_path(repository.store), repository.name | List.wrap(path)])
   end
 

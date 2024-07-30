@@ -1,7 +1,5 @@
 defmodule LocalHex.RegressionTest do
-  use ExUnit.Case
-
-  alias LocalHexWeb.Router.Helpers, as: Routes
+  use LocalHexWeb.ConnCase
 
   setup do
     File.rm_rf!("tmp")
@@ -44,7 +42,7 @@ defmodule LocalHex.RegressionTest do
       :hex_tarball.create(metadata, files)
 
     {:ok, {200, _, %{"url" => url}}} = :hex_api_release.publish(config, tarball)
-    assert url == Routes.url(LocalHexWeb.Endpoint)
+    assert String.starts_with?(url, "http://localhost:4002/")
 
     bad_auth_config = %{config | api_key: "bad"}
     {:ok, {401, _, "unauthorized"}} = :hex_api_release.publish(bad_auth_config, tarball)

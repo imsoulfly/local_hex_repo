@@ -10,7 +10,7 @@ defmodule LocalHexWeb.API.PackageController do
     case RepositoryServer.publish(repository_config(), tarball) do
       {:ok, _repository} ->
         body =
-          %{"url" => Routes.url(conn)}
+          %{"url" => current_url(conn)}
           |> :erlang.term_to_binary()
 
         conn

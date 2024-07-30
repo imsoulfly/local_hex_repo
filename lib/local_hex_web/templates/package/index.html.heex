@@ -1,8 +1,0 @@
-<%= render LocalHexWeb.PackageView, "_setup_guide.html", conn: @conn, repo: @repo %>
-
-<%= render LocalHexWeb.PackageView, "_packages.html",
-  title: "Internal Libraries",
-  packages: LocalHex.Registry.all_versions_of_packages(@repo.registry),
-  repo: @repo,
-  conn: @conn
-%>

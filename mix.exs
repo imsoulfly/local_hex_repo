@@ -52,13 +52,14 @@ defmodule LocalHex.MixProject do
       {:hex_core, "~> 0.8"},
       {:jason, "~> 1.3"},
       {:logger_file_backend, "~> 0.0.12", only: :test},
-      {:phoenix, "~> 1.6.0"},
-      {:phoenix_html, "~> 3.2"},
+      {:phoenix, "~> 1.7"},
+      {:phoenix_html, "~> 4.0"},
+      {:phoenix_html_helpers, "~> 1.0"},
       {:phoenix_live_view, "~> 0.17"},
       {:phoenix_live_dashboard, "~> 0.6"},
       {:plug_cowboy, "~> 2.5"},
       {:sweet_xml, "~> 0.7"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
 
       # dev libraries
