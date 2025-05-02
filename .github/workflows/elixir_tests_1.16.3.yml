@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Elixir
-      uses: erlef/setup-beam@v1.15
+      uses: erlef/setup-beam@v1
       with:
         elixir-version: '1.16.3' # Define the elixir version [required]
         otp-version: '26.2' # Define the OTP version [required]
