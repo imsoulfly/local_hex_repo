@@ -41,7 +41,7 @@ defmodule LocalHex.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bulma, "0.9.4"},
+      {:bulma, "~> 1.0"},
       {:dart_sass, "~> 0.5"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_aws, "~> 2.2"},
@@ -55,7 +55,7 @@ defmodule LocalHex.MixProject do
       {:phoenix, "~> 1.7"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_html_helpers, "~> 1.0"},
-      {:phoenix_live_view, "~> 0.17"},
+      {:phoenix_live_view, "~> 1.0"},
       {:phoenix_live_dashboard, "~> 0.6"},
       {:plug_cowboy, "~> 2.5"},
       {:sweet_xml, "~> 0.7"},
