@@ -58,9 +58,9 @@
       <p>Point dependencies to the internal repository from your mix.exs:</p>
 
       <div class="pre">
-        {:jason, "~> 1.0"},
+        <%= "{" %>:jason, "~> 1.0"<%= "}" %>,
         <br />
-        {:your_library, "~> 0.8.3", repo: <%= @repo.name %>},
+        <%= "{" %>:your_library, "~> 0.8.3", repo: <%= @repo.name %><%= "}" %>,
       </div>
     </div>
   </div>
