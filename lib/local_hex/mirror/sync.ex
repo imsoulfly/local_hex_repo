@@ -122,11 +122,18 @@ defmodule LocalHex.Mirror.Sync do
 
   defp filter_allowed_packages(mirror, versions, new_packages) do
     packages_in_registry = Map.keys(mirror.registry)
+    sync_only = mirror.options[:sync_only]
+
+    # `sync_only` is optional. If unset (`nil`) we mirror everything.
+    # Guard `in` so we never call Enum.member?/2 on nil.
+    sync_only_allows? = fn name ->
+      is_nil(sync_only) or (is_list(sync_only) and name in sync_only)
+    end
 
     for %{name: name} = map <- versions,
         name in packages_in_registry or
-          name in mirror.options[:sync_only] or
-          name in new_packages,
+          name in new_packages or
+          sync_only_allows?.(name),
         into: %{},
         do: {name, Map.delete(map, :version)}
   end
