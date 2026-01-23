@@ -47,15 +47,12 @@ if config_env() == :prod do
   end
 
   secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+    read_key!("SECRET_KEY_BASE", "SECRET_KEY_BASE_PATH") ||
+      raise "SECRET_KEY_BASE is missing"
 
-  host = System.get_env("PHX_HOST") || "localhost"
-  port = String.to_integer(System.get_env("PORT") || "4000")
-  scheme = System.get_env("PHX_URL_SCHEME") || "http"
+  host = read_key!("PHX_HOST", "PHX_HOST_PATH") || "localhost"
+  port = String.to_integer(read_key!("PORT", "PORT_PATH") || "4000")
+  scheme = read_key!("PHX_URL_SCHEME", "PHX_URL_SCHEME_PATH") || "http"
 
   url_port =
     System.get_env("PHX_URL_PORT") ||
