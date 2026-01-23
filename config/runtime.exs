@@ -6,6 +6,27 @@ import Config
 # and secrets from environment variables or elsewhere. Do not define
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
+
+# Runtime log level override (applies to releases and `mix phx.server` runs).
+# Examples: LOG_LEVEL=debug|info|warn|warning|error
+if log_level = System.get_env("LOG_LEVEL", "info") do
+  level =
+    case String.downcase(String.trim(log_level)) do
+      "debug" -> :debug
+      "info" -> :info
+      "notice" -> :notice
+      "warn" -> :warning
+      "warning" -> :warning
+      "error" -> :error
+      "critical" -> :critical
+      "alert" -> :alert
+      "emergency" -> :emergency
+      other -> raise "Unsupported LOG_LEVEL=#{inspect(other)}"
+    end
+
+  config :logger, level: level
+end
+
 if config_env() == :prod do
   fetch_env! = fn name ->
     System.get_env(name) ||
@@ -14,14 +35,14 @@ if config_env() == :prod do
       """
   end
 
-  read_key! = fn pem_env, path_env ->
-    case System.get_env(pem_env) do
-      pem when is_binary(pem) and pem != "" ->
-        pem
+  read_key! = fn env_name, path_env_name ->
+    case System.get_env(env_name) do
+      value when is_binary(value) and value != "" ->
+        value
 
       _ ->
-        path = fetch_env!.(path_env)
-        File.read!(path)
+        path = fetch_env!.(path_env_name)
+        path |> File.read!() |> String.trim()
     end
   end
 
@@ -58,7 +79,7 @@ if config_env() == :prod do
     server: true
 
   # LocalHex (required in prod for the app to boot)
-  auth_token = fetch_env!.("LOCAL_HEX_AUTH_TOKEN")
+  auth_token = read_key!.("LOCAL_HEX_AUTH_TOKEN", "LOCAL_HEX_AUTH_TOKEN_PATH")
   repo_name = System.get_env("LOCAL_HEX_REPO_NAME") || "local_hex"
 
   store =
