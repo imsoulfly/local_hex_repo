@@ -1,0 +1,4 @@
+[tools]
+erlang = "27.0.1"
+elixir = "1.17.2"
+just = "latest"

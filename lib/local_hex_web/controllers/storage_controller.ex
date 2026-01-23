@@ -34,16 +34,22 @@ defmodule LocalHexWeb.StorageController do
         |> send_resp(200, contents)
 
       {:error, _} ->
-        Server.ensure_package(params["name"])
-
-        case Storage.read_package(repository_mirror_config(), params["name"]) do
-          {:ok, contents} ->
-            conn
-            |> put_resp_content_type("application/vnd.hex+erlang")
-            |> send_resp(200, contents)
-
-          {:error, _} ->
+        case repository_mirror_config() do
+          nil ->
             send_resp(conn, 404, "")
+
+          mirror_repo ->
+            Server.ensure_package(params["name"])
+
+            case Storage.read_package(mirror_repo, params["name"]) do
+              {:ok, contents} ->
+                conn
+                |> put_resp_content_type("application/vnd.hex+erlang")
+                |> send_resp(200, contents)
+
+              {:error, _} ->
+                send_resp(conn, 404, "")
+            end
         end
     end
   end
@@ -56,14 +62,20 @@ defmodule LocalHexWeb.StorageController do
         |> send_resp(200, contents)
 
       {:error, _} ->
-        case Storage.read_package_tarball(repository_mirror_config(), params["tarball"]) do
-          {:ok, contents} ->
-            conn
-            |> put_resp_content_type("application/vnd.hex+erlang")
-            |> send_resp(200, contents)
-
-          {:error, _} ->
+        case repository_mirror_config() do
+          nil ->
             send_resp(conn, 404, "")
+
+          mirror_repo ->
+            case Storage.read_package_tarball(mirror_repo, params["tarball"]) do
+              {:ok, contents} ->
+                conn
+                |> put_resp_content_type("application/vnd.hex+erlang")
+                |> send_resp(200, contents)
+
+              {:error, _} ->
+                send_resp(conn, 404, "")
+            end
         end
     end
   end

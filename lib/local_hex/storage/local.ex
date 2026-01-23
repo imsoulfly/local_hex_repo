@@ -69,7 +69,15 @@ defmodule LocalHex.Storage.Local do
     Path.join([root_path(repository.store), repository.name | List.wrap(path)])
   end
 
-  defp root_path({_module, root: path}) do
-    Path.join(Application.app_dir(:local_hex), path)
+  defp root_path({_module, root: {app, path}}) when is_atom(app) and is_binary(path) do
+    Application.app_dir(app, path)
+  end
+
+  defp root_path({_module, root: path}) when is_binary(path) do
+    if Path.type(path) == :absolute do
+      path
+    else
+      Path.join(Application.app_dir(:local_hex), path)
+    end
   end
 end

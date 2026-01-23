@@ -6,8 +6,6 @@ defmodule LocalHex.Mirror.HexPm do
   """
   require Logger
 
-  alias Hex.HTTP.SSL
-
   def fetch_hexpm_names(repository) do
     Logger.debug("#{inspect(__MODULE__)} fetching names")
 
@@ -64,10 +62,28 @@ defmodule LocalHex.Mirror.HexPm do
            %{
              profile: :default,
              http_options: [
-               ssl: SSL.ssl_opts(repository.options.upstream_url)
+               ssl: ssl_opts_for_url(repository.options.upstream_url)
              ]
            }}
     }
+  end
+
+  defp ssl_opts_for_url(url) do
+    case URI.parse(url) do
+      %URI{scheme: "https", host: host} when is_binary(host) and host != "" ->
+        [
+          verify: :verify_peer,
+          cacerts: :public_key.cacerts_get(),
+          depth: 3,
+          server_name_indication: String.to_charlist(host),
+          customize_hostname_check: [
+            match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
+          ]
+        ]
+
+      _ ->
+        []
+    end
   end
 
   defp user_agent_fragment do
