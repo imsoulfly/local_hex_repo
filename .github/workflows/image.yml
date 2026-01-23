@@ -57,7 +57,7 @@ jobs:
       if: ${{ contains(fromJson('["push", "pull_request", "workflow_dispatch"]'), github.event_name) }}
       env:
         HAS_REF: ${{ startsWith(github.ref, 'refs/tags/') && 'true' || 'false' }}
-        IS_PRERELEASE: ${{ contains(github.ref, '-pre.') && 'true' || 'false' }}
+        IS_PRERELEASE: ${{ (contains(github.ref, '-pre') || contains(github.ref, '-alpha') || contains(github.ref, '-beta') || contains(github.ref, '-rc') || contains(github.ref, '-dev')) && 'true' || 'false' }}
         REPO_SLUG: ${{ format('{0}/local_hex_repo', github.repository_owner) }}
       run: |
         version="dev"
