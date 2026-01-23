@@ -46,6 +46,7 @@ RUN apt-get update && \
 ENV LANG=C.UTF-8 \
   LC_ALL=C.UTF-8 \
   PHX_SERVER=true \
+  PHX_STATIC_GZIP=true \
   PORT=4000
 
 WORKDIR /app

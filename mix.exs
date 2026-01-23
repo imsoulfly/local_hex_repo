@@ -93,7 +93,7 @@ defmodule LocalHex.MixProject do
       "assets.deploy": [
         "sass default --no-source-map --style=compressed",
         "esbuild default --minify",
-        "phx.digest"
+        "phx.digest --gzip"
       ]
     ]
   end

@@ -50,17 +50,8 @@ if config_env() == :prod do
     read_key!("SECRET_KEY_BASE", "SECRET_KEY_BASE_PATH") ||
       raise "SECRET_KEY_BASE is missing"
 
-  host = read_key!("PHX_HOST", "PHX_HOST_PATH") || "localhost"
-  port = String.to_integer(read_key!("PORT", "PORT_PATH") || "4000")
-  scheme = read_key!("PHX_URL_SCHEME", "PHX_URL_SCHEME_PATH") || "http"
-
-  url_port =
-    System.get_env("PHX_URL_PORT") ||
-      if scheme == "https" do
-        "443"
-      else
-        "80"
-      end
+  host = System.get_env("PHX_HOST") || "localhost"
+  port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :local_hex, LocalHexWeb.Endpoint,
     http: [
@@ -71,7 +62,7 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    url: [host: host, port: String.to_integer(url_port), scheme: scheme],
+    url: [host: host, port: 80, scheme: "http"],
     secret_key_base: secret_key_base,
     server: true
 

@@ -10,8 +10,6 @@ services:
       # Phoenix
       PORT: "4000"
       PHX_HOST: ${PHX_HOST:-localhost}
-      PHX_URL_SCHEME: ${PHX_URL_SCHEME:-http}
-      PHX_URL_PORT: ${PHX_URL_PORT:-4000}
 
       # REQUIRED (LocalHex)
       LOCAL_HEX_AUTH_TOKEN: ${LOCAL_HEX_AUTH_TOKEN:?set LOCAL_HEX_AUTH_TOKEN}

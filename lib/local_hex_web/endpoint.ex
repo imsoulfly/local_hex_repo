@@ -19,7 +19,7 @@ defmodule LocalHexWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :local_hex,
-    gzip: true,
+    gzip: System.get_env("PHX_STATIC_GZIP") in ~w(1 true TRUE),
     only: LocalHexWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
