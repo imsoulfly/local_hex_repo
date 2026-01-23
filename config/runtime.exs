@@ -47,7 +47,7 @@ if config_env() == :prod do
   end
 
   secret_key_base =
-    read_key!("SECRET_KEY_BASE", "SECRET_KEY_BASE_PATH") ||
+    read_key!.("SECRET_KEY_BASE", "SECRET_KEY_BASE_PATH") ||
       raise "SECRET_KEY_BASE is missing"
 
   host = System.get_env("PHX_HOST") || "localhost"
