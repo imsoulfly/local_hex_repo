@@ -51,9 +51,10 @@ ENV LANG=C.UTF-8 \
 
 WORKDIR /app
 
-RUN useradd --system --home /app --shell /usr/sbin/nologin app && \
-  mkdir -p /data/repos /data/storage && \
-  chown -R app:app /app /data
+RUN groupadd --system --gid 10001 app && \
+    useradd  --system --uid 10001 --gid 10001 --home /app --shell /usr/sbin/nologin app && \
+    mkdir -p /data/repos /data/storage && \
+    chown -R app:app /app /data
 
 COPY --from=build /app/_build/prod/rel/local_hex ./
 
