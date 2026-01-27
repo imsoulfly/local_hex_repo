@@ -28,6 +28,10 @@ defmodule LocalHex.Documentation.Cache do
   end
 
   defp ensure_filled_cache(%{exists: true} = params) do
+    # Docs are already extracted, but we may need to backfill files that are not
+    # guaranteed to exist in the docs tarball (ex. `docs_config.js` for ExDoc >= 0.40).
+    docs_path = Path.join(cache_path(params.repo), documentation_name(params.documentation))
+    ensure_docs_config(params.repo, params.documentation, docs_path)
     params
   end
 
