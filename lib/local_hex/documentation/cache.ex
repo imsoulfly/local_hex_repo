@@ -68,13 +68,11 @@ defmodule LocalHex.Documentation.Cache do
   end
 
   defp cache_path(repo) do
-    Path.join([
-      Application.app_dir(:local_hex),
-      "priv",
-      "static",
-      "docs",
-      repo.name
-    ])
+    base =
+      System.get_env("LOCAL_HEX_DOCS_CACHE_DIR") ||
+        Application.app_dir(:local_hex, "priv/static/docs")
+
+    Path.join([base, repo.name])
   end
 
   defp documentation_name(documentation) do

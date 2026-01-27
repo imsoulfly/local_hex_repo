@@ -12,6 +12,10 @@ defmodule LocalHexWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  # Serve extracted docs from a runtime-configured, writable directory.
+  # Defaults to `priv/static/docs` inside the release.
+  plug LocalHexWeb.Plugs.DocsStatic, default_from: {:local_hex, "priv/static/docs"}
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest

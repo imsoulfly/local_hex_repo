@@ -67,6 +67,7 @@ Common:
 * `PHX_HOST` (default: `localhost`)
 * `LOG_LEVEL` (ex. `debug|info|warning|error`, default: `info`)
 * `PHX_STATIC_GZIP` (`true` to serve pre-compressed assets from `priv/static` in prod)
+* `LOCAL_HEX_DOCS_CACHE_DIR` (recommended in containers): writable directory where documentation tarballs are extracted and served from under `/docs/*` (ex. `/var/local_hex/docs`)
 
 Storage:
 
@@ -79,6 +80,27 @@ Storage:
   * `AWS_REGION` / `AWS_DEFAULT_REGION` (default: `us-east-1`)
   * Optional IRSA / web identity: `AWS_ROLE_ARN` + `AWS_WEB_IDENTITY_TOKEN_FILE`
 
+Kubernetes note (docs):
+
+Documentation pages are served from extracted tarballs under `/docs/*`. In Docker/Kubernetes, the release’s `priv/static` directory is often read-only, so set `LOCAL_HEX_DOCS_CACHE_DIR` to a writable volume.
+
+Example `emptyDir` mount:
+
+```yaml
+volumes:
+  - name: local-hex-docs
+    emptyDir: {}
+containers:
+  - name: local-hex
+    env:
+      - name: LOCAL_HEX_DOCS_CACHE_DIR
+        value: /var/local_hex/docs
+    volumeMounts:
+      - name: local-hex-docs
+        mountPath: /var/local_hex/docs
+```
+
+Note: `emptyDir` is **per-pod**. If you run multiple replicas of `local_hex_repo` and want a shared docs cache across instances, use a **PVC** (or other shared volume) instead.
 
 ## Adding setup for a Hex.pm mirror
 
@@ -125,27 +147,27 @@ config :local_hex,
   ]
 ```
 
-* __name__: Name of the repository which also is used in the `hex.config` and `deps` configuration
+* **name**: Name of the repository which also is used in the `hex.config` and `deps` configuration
 
-* __store__: Currently it's only possible to choose `LocalHex.Storage.(Local | S3)` to store packages. In case more is need it is pretty easy to write another adapter. Also see the adapter modules for their configuration.
+* **store**: Currently it's only possible to choose `LocalHex.Storage.(Local | S3)` to store packages. In case more is need it is pretty easy to write another adapter. Also see the adapter modules for their configuration.
 
-* __private_key__: Private key generated via `ssh` or any other way. This is used to sign packages. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
+* **private_key**: Private key generated via `ssh` or any other way. This is used to sign packages. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
 
-* __public_key__: Public key material for you private key. This is used to validate published packages with the private key. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
+* **public_key**: Public key material for you private key. This is used to validate published packages with the private key. Suggestion: It's best to be provided via your infrastructure and not to be included in your codebase.
 
-* __sync_interval__: The interval in milliseconds to wait between rechecks if something new has to be mirrored
+* **sync_interval**: The interval in milliseconds to wait between rechecks if something new has to be mirrored
 
-* __sync_opts__: Currently only timeout or concurrency controls for the sync, more documentation and options will follow
+* **sync_opts**: Currently only timeout or concurrency controls for the sync, more documentation and options will follow
 
-* __sync_on_demand__: Dependencies when requested but missing will be tried to synced from upstream
+* **sync_on_demand**: Dependencies when requested but missing will be tried to synced from upstream
 
-* __sync_only__: The selection of dependencies to mirror from upstream
+* **sync_only**: The selection of dependencies to mirror from upstream
 
-* __upstream_name__: Default name of Hex.pm, could be changed to some third party package storage
+* **upstream_name**: Default name of Hex.pm, could be changed to some third party package storage
 
-* __upstream_url__: Default url of Hex.pm, could be changed to some third party package storage url
+* **upstream_url**: Default url of Hex.pm, could be changed to some third party package storage url
 
-* __upstream_public_key__: Default public key of Hex.pm, could be changed to some third party package storage public key
+* **upstream_public_key**: Default public key of Hex.pm, could be changed to some third party package storage public key
 
 ## Additional storage adapters
 
