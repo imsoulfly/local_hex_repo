@@ -51,6 +51,10 @@ defmodule LocalHexWeb.DocumentationControllerTest do
 
       conn = build_conn() |> get(location)
       assert conn.status == 200
+
+      conn = build_conn() |> get("/docs/test/example_lib-0.1.0/docs_config.js")
+      assert conn.status == 200
+      assert conn.resp_body =~ "var versionNodes"
     end
 
     test "returns 404 on missing lib or version", %{conn: conn} do
