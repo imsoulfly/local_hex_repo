@@ -26,4 +26,3 @@ defmodule LocalHexWeb.Plugs.DocsStatic do
     Plug.Static.call(conn, static_opts)
   end
 end
-
