@@ -54,9 +54,10 @@ defmodule LocalHexWeb do
       end
 
       defp repository_mirror_config do
-        Application.fetch_env!(:local_hex, :repositories)
-        |> Keyword.get(:mirror)
-        |> Repository.init()
+        case Application.fetch_env!(:local_hex, :repositories) |> Keyword.get(:mirror) do
+          nil -> nil
+          mirror_opts -> Repository.init(mirror_opts)
+        end
       end
     end
   end

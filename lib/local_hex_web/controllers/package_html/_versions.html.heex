@@ -1,6 +1,6 @@
 <% package = assigns[:package] %>
 <% limit = assigns[:limit] || length(package.versions) %>
-<%= for version <- package.versions |> Enum.sort_by(&Version.parse!/1, :desc) |> Enum.take(limit)  do %>
+<%= for version <- package.versions |> Enum.sort(&(Version.compare(&1, &2) == :gt)) |> Enum.take(limit) do %>
   <tr>
     <td>
     </td>

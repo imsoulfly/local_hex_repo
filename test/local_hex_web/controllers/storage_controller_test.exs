@@ -72,6 +72,22 @@ defmodule LocalHexWeb.StorageControllerTest do
       assert conn.status == 200
     end
 
+    test "loads prerelease package tarball", %{conn: conn, repository: repository} do
+      package = %LocalHex.Package{
+        name: "whistle_punk",
+        version: "0.1.0-beta.0",
+        release: %{},
+        tarball: "test_tarball_prerelease"
+      }
+
+      :ok = Storage.write_package_tarball(repository, package)
+
+      conn = get(conn, "/tarballs/whistle_punk-0.1.0-beta.0.tar")
+
+      assert conn.status == 200
+      assert conn.resp_body == "test_tarball_prerelease"
+    end
+
     test "with nonexisting package tarball returns not found", %{conn: conn} do
       conn = get(conn, "/tarballs/example_lib-0.1.0.tar")
 
@@ -95,6 +111,21 @@ defmodule LocalHexWeb.StorageControllerTest do
       conn = get(conn, "/docs/example_lib-0.1.0.tar")
 
       assert conn.status == 200
+    end
+
+    test "loads prerelease documentation tarball", %{conn: conn, repository: repository} do
+      documentation = %LocalHex.Documentation{
+        name: "whistle_punk",
+        version: "0.1.0-beta.0",
+        tarball: "test_docs_tarball_prerelease"
+      }
+
+      :ok = Storage.write_docs_tarball(repository, documentation)
+
+      conn = get(conn, "/docs/whistle_punk-0.1.0-beta.0.tar")
+
+      assert conn.status == 200
+      assert conn.resp_body == "test_docs_tarball_prerelease"
     end
 
     test "with nonexisting documentation tarball returns not found", %{conn: conn} do

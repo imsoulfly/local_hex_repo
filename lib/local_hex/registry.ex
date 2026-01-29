@@ -50,7 +50,7 @@ defmodule LocalHex.Registry do
     versions =
       registry[package_name]
       |> Enum.map(fn entry -> entry[:version] end)
-      |> Enum.sort()
+      |> Enum.sort(&(Version.compare(&1, &2) == :lt))
 
     %{
       name: package_name,

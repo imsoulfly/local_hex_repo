@@ -1,0 +1,26 @@
+services:
+  local_hex:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      # REQUIRED (Phoenix)
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?set SECRET_KEY_BASE}
+
+      # Phoenix
+      PORT: "4000"
+      PHX_HOST: ${PHX_HOST:-localhost}
+
+      # REQUIRED (LocalHex)
+      LOCAL_HEX_AUTH_TOKEN: ${LOCAL_HEX_AUTH_TOKEN:?set LOCAL_HEX_AUTH_TOKEN}
+      LOCAL_HEX_REPO_NAME: ${LOCAL_HEX_REPO_NAME:-local_hex}
+      LOCAL_HEX_STORE: ${LOCAL_HEX_STORE:-local}
+      LOCAL_HEX_REPO_ROOT: /data/repos
+      LOCAL_HEX_PRIVATE_KEY_PATH: /run/secrets/local_hex_private_key.pem
+      LOCAL_HEX_PUBLIC_KEY_PATH: /run/secrets/local_hex_public_key.pem
+
+    volumes:
+      - ./priv/repos:/data/repos
+      - ./priv/static/storage:/data/storage
+      - ./test/fixtures/test_private_key.pem:/run/secrets/local_hex_private_key.pem:ro
+      - ./test/fixtures/test_public_key.pem:/run/secrets/local_hex_public_key.pem:ro

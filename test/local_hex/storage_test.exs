@@ -93,6 +93,22 @@ defmodule LocalHex.StorageTest do
       assert tarball_content == "test_tarball_fake"
     end
 
+    test "#read/write_package_tarball supports prerelease versions", %{repository: repository} do
+      package = %Package{
+        name: "whistle_punk",
+        version: "0.1.0-beta.0",
+        release: %{},
+        tarball: "test_tarball_prerelease"
+      }
+
+      :ok = Storage.write_package_tarball(repository, package)
+
+      {:ok, tarball_content} =
+        Storage.read_package_tarball(repository, "whistle_punk-0.1.0-beta.0.tar")
+
+      assert tarball_content == "test_tarball_prerelease"
+    end
+
     test "#read/write_docs_package", %{repository: repository} do
       documentation = %Documentation{
         name: "test_package",
@@ -103,6 +119,21 @@ defmodule LocalHex.StorageTest do
       :ok = Storage.write_docs_tarball(repository, documentation)
       {:ok, tarball_content} = Storage.read_docs_tarball(repository, "test_package-1.0.0.tar")
       assert tarball_content == "test_tarball_fake"
+    end
+
+    test "#read/write_docs_tarball supports prerelease versions", %{repository: repository} do
+      documentation = %Documentation{
+        name: "whistle_punk",
+        version: "0.1.0-beta.0",
+        tarball: "test_docs_tarball_prerelease"
+      }
+
+      :ok = Storage.write_docs_tarball(repository, documentation)
+
+      {:ok, tarball_content} =
+        Storage.read_docs_tarball(repository, "whistle_punk-0.1.0-beta.0.tar")
+
+      assert tarball_content == "test_docs_tarball_prerelease"
     end
   end
 

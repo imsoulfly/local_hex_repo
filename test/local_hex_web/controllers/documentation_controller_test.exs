@@ -5,13 +5,11 @@ defmodule LocalHexWeb.DocumentationControllerTest do
 
   setup _tags do
     on_exit(fn ->
-      Path.join([
-        Application.app_dir(:local_hex),
-        "priv",
-        "static",
-        "docs",
-        repository_config().name
-      ])
+      base =
+        System.get_env("LOCAL_HEX_DOCS_CACHE_DIR") ||
+          Application.app_dir(:local_hex, "priv/static/docs")
+
+      Path.join([base, repository_config().name])
       |> File.rm_rf()
     end)
 
@@ -28,6 +26,67 @@ defmodule LocalHexWeb.DocumentationControllerTest do
       conn = get(conn, "/documentation/example_lib/0.1.0")
       assert html_response(conn, 302) =~ "/docs/test/example_lib-0.1.0/index.html"
       assert html_response(conn, 302) =~ "redirected"
+    end
+
+    test "serves docs from LOCAL_HEX_DOCS_CACHE_DIR when set", %{conn: conn} do
+      tmp_dir =
+        Path.join(System.tmp_dir!(), "local_hex_docs_test_#{System.unique_integer([:positive])}")
+
+      File.mkdir_p!(tmp_dir)
+      System.put_env("LOCAL_HEX_DOCS_CACHE_DIR", tmp_dir)
+
+      on_exit(fn ->
+        System.delete_env("LOCAL_HEX_DOCS_CACHE_DIR")
+        File.rm_rf(tmp_dir)
+      end)
+
+      repository = repository_config()
+      {:ok, tarball} = File.read("./test/fixtures/docs/example_lib-0.1.0.tar")
+      :ok = Repository.publish_docs(repository, "example_lib", "0.1.0", tarball)
+
+      conn = get(conn, "/documentation/example_lib/0.1.0")
+
+      [location] = Plug.Conn.get_resp_header(conn, "location")
+      assert location == "/docs/test/example_lib-0.1.0/index.html"
+
+      conn = build_conn() |> get(location)
+      assert conn.status == 200
+
+      conn = build_conn() |> get("/docs/test/example_lib-0.1.0/docs_config.js")
+      assert conn.status == 200
+      assert conn.resp_body =~ "var versionNodes"
+    end
+
+    test "backfills docs_config.js for already-cached docs", %{conn: conn} do
+      tmp_dir =
+        Path.join(System.tmp_dir!(), "local_hex_docs_test_#{System.unique_integer([:positive])}")
+
+      File.mkdir_p!(tmp_dir)
+      System.put_env("LOCAL_HEX_DOCS_CACHE_DIR", tmp_dir)
+
+      on_exit(fn ->
+        System.delete_env("LOCAL_HEX_DOCS_CACHE_DIR")
+        File.rm_rf(tmp_dir)
+      end)
+
+      repository = repository_config()
+      {:ok, tarball} = File.read("./test/fixtures/docs/example_lib-0.1.0.tar")
+      :ok = Repository.publish_docs(repository, "example_lib", "0.1.0", tarball)
+
+      # Prime the cache
+      conn = get(conn, "/documentation/example_lib/0.1.0")
+      [location] = Plug.Conn.get_resp_header(conn, "location")
+      assert location == "/docs/test/example_lib-0.1.0/index.html"
+
+      docs_dir = Path.join([tmp_dir, "test", "example_lib-0.1.0"])
+      File.rm(Path.join(docs_dir, "docs_config.js"))
+
+      # A second request should backfill docs_config.js
+      conn = build_conn() |> get("/documentation/example_lib/0.1.0")
+      assert conn.status == 302
+
+      conn = build_conn() |> get("/docs/test/example_lib-0.1.0/docs_config.js")
+      assert conn.status == 200
     end
 
     test "returns 404 on missing lib or version", %{conn: conn} do

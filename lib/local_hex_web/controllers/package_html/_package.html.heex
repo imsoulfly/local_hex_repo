@@ -8,7 +8,8 @@
     </tr>
   </thead>
   <tbody>
-    <%= for version <- @package.versions |> Enum.sort_by(&Version.parse!/1, :desc) |> Enum.take(3)  do %>
+    <% limit = if action_name(@conn) == :index, do: 3, else: length(@package.versions) %>
+    <%= for version <- @package.versions |> Enum.sort(&(Version.compare(&1, &2) == :gt)) |> Enum.take(limit) do %>
       <tr>
       <td></td>
       <td>

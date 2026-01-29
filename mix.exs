@@ -28,7 +28,7 @@ defmodule LocalHex.MixProject do
   def application do
     [
       mod: {LocalHex.Application, []},
-      extra_applications: [:logger, :runtime_tools, :crypto, :inets, :ssl, :hex]
+      extra_applications: [:logger, :runtime_tools, :crypto, :inets, :ssl]
     ]
   end
 
@@ -46,6 +46,7 @@ defmodule LocalHex.MixProject do
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_aws, "~> 2.2"},
       {:ex_aws_s3, "~> 2.3"},
+      {:ex_aws_sts, "~> 2.2"},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:floki, ">= 0.30.0", only: :test},
       {:hackney, "~> 1.18"},
@@ -92,7 +93,7 @@ defmodule LocalHex.MixProject do
       "assets.deploy": [
         "sass default --no-source-map --style=compressed",
         "esbuild default --minify",
-        "phx.digest"
+        "phx.digest --gzip"
       ]
     ]
   end

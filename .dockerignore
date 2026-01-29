@@ -1,0 +1,14 @@
+.git
+_build
+deps
+.elixir_ls
+.DS_Store
+erl_crash.dump
+
+# Local dev assets/build output (built in the Docker image)
+priv/static/assets
+priv/static/cache_manifest.json
+
+# Examples
+example_lib/_build
+example_lib/deps

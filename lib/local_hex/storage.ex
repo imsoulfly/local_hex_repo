@@ -126,7 +126,11 @@ defmodule LocalHex.Storage do
   end
 
   defp extract_name_from_tar_filename(tarball) do
-    regex = ~r/\A(?<package_name>[a-zA-Z_-]*)-\d+\.\d+\.\d+\.tar\z/
+    # Tarballs follow `<package>-<version>.tar` where <version> is SemVer.
+    # Support pre-release/build metadata (e.g. `1.2.3-beta.0`, `1.2.3+build.1`),
+    # otherwise downloads for those versions fall back to `default/` and 404.
+    regex =
+      ~r/\A(?<package_name>[a-zA-Z0-9_-]+)-\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?\.tar\z/
 
     case Regex.named_captures(regex, tarball) do
       %{"package_name" => package_name} ->
